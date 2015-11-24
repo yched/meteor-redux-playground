@@ -1,6 +1,5 @@
 const { createStore, combineReducers, applyMiddleware } = Redux;
 const { devTools, persistState } = ReduxDevTools;
-const { DevTools, DebugPanel, LogMonitor } = ReactReduxDevTools;
 
 // Redux has a single store. to reduce complexity it allows you to combine
 // several 'reducer' functions that share this single state object.
@@ -37,5 +36,10 @@ const finalCreateStore =
 // note, this is an optional step to use middleware (we're auto console.log dispatches)
 // let createStoreWithMiddleware = applyMiddleware(logger)(createStore);
 // store = createStoreWithMiddleware(rootReducer);
-// 
+//
 store = finalCreateStore(rootReducer);
+
+// trigger action when this changes
+trackCollection(Players, (data) => {
+  store.dispatch(Actions.playersChanged(data));
+});

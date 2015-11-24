@@ -21,8 +21,10 @@ PlayerList = React.createClass({
            return (
              <PlayerItem
                key={ player._id }
-               selectedPlayerId={ this.props.selectedId }
-               player={ player } />
+               selected={ this.props.selectedId == player._id }
+               player={ player }
+               selectPlayer = { this.props.selectPlayer }
+             />
            );
          })
        }

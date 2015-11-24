@@ -1,13 +1,10 @@
 PlayerItem = React.createClass({
   handleClick() {
-    var playerId = this.props.player._id;
-    store.dispatch(Actions.selectPlayer(playerId));
+    this.props.selectPlayer(this.props.player._id);
   },
 
   getClassName() {
-    var selectedId = this.props.selectedPlayerId;
-    var playerId = this.props.player._id;
-    return (selectedId === playerId) ? 'player selected' : 'player';
+    return this.props.selected ? 'player selected' : 'player';
   },
 
   render() {

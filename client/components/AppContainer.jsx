@@ -12,7 +12,7 @@ let AppContainer = React.createClass({
   },
 
   render() {
-    //debugger // checkout this.props with debugger!
+    console.log('AppContainer props', this.props);
     return (<App {...this.props} />);
   }
 });
@@ -30,4 +30,6 @@ function mapStateToProps(state) {
   };
 }
 
-this.AppContainer = connect(mapStateToProps)(AppContainer);
+Meteor.startup(function () {
+  this.AppContainer = connect(mapStateToProps, Actions)(AppContainer);
+});

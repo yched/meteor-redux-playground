@@ -3,33 +3,27 @@
 // unneeded boilerplate  but it's **really** nice to have a file
 // with *all* possible ways to mutate the state of the app.
 
-Actions = {};
+Actions = {
+  // used when a mongo players collection changes
+  playersChanged(newDocs) {
+    return {
+      type: 'PLAYERS_COLLECTION_CHANGED',
+      collection: newDocs
+    };
+  },
 
-// used when a mongo players collection changes
-Actions.playersChanged = function playersChanged(newDocs) {
-  return {
-    type: 'PLAYERS_COLLECTION_CHANGED',
-    collection: newDocs
-  };
-};
+  // doesn't return payload because our collection watcher
+  // will send a CHANGED action and update the store
+  incrementScore(playerId) {
+    Meteor.call('incrementScore', playerId, 5);
+    // TODO call FAILED action on error
+    return {type: 'INCREMENT_SCORE'};
+  },
 
-
-// doesn't return payload because our collection watcher
-// will send a CHANGED action and update the store
-Actions.incrementScore = function incrementScore(playerId) {
-  Players.update({_id: playerId}, {$inc: {score: 5}});
-  // TODO call FAILED action on error
-  return { type: 'INCREMENT_SCORE' };
-};
-
-
-Actions.selectPlayer = function selectPlayer(playerId) {
-  let player = Players.findOne(playerId);
-  let playerName = player.name || "N/A";
-
-  return {
-    type: 'SELECT_PLAYER',
-    playerId: playerId,
-    playerName: playerName
-  };
-};
+  selectPlayer(playerId) {
+    return {
+      type: 'SELECT_PLAYER',
+      playerId: playerId
+    };
+  }
+}

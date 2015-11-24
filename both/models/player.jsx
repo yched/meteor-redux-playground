@@ -8,16 +8,6 @@
 // to publish data and subscribe to pull it into this cache
 Players = new Mongo.Collection("players");
 
-Meteor.startup(function() { // work around files not being defined yet
-  if (Meteor.isClient) { // work around not having actions in /both folder
-    // trigger action when this changes
-    trackCollection(Players, (data) => {
-      store.dispatch(Actions.playersChanged(data));
-    });
-  }
-});
-
-
 Player = {
   create() {
     // Players.insert(...)
