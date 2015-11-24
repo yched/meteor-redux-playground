@@ -8,7 +8,6 @@ react
 meteorhacks:npm
 
 
-npm-container
 cosmos:browserify
 #promise
 skinnygeek1010:flux-helpers
@@ -19,3 +18,6 @@ session
 tracker
 static-html
 mobile-experience
+
+
+npm-container

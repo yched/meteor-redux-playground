@@ -5,52 +5,41 @@
 // into one single app state. We'll use two reducers, one for transient state
 // that the UI uses (selected id,name) and one for data (coming from Mongo)
 
-let initialInterfaceState = {
-  selectedId: '',
-  selectedPlayerName: ''
-}
 
 // these reducers *must* be pure to use time-travel dev-tools
 // never directly mutate the `state` param, use merge instead
 Reducers = {
-  userInterface(state, action) {
-    state = state || initialInterfaceState;
-
+  userInterface(state = {}, action) {
     switch (action.type) {
       case 'SELECT_PLAYER':
-        let player = Players.findOne(action.playerId);
-        let playerName = player.name || "N/A";
-
         // we happen to be replacing all the reducers state but with merge you
         // could just return the selectedId and it would retain selectedPlayerName
         return _.extend({}, state, {
           selectedId: action.playerId,
-          selectedPlayerName: playerName
         });
       default:
         return state;
     }
   },
   // using the ES6 default params instead of the manual check like above
-  players(state = [], action) {
+  collections(state = {}, action) {
     switch (action.type) {
-      case 'INCREMENT_SCORE':
-        // normally in redux you would update and merge state here but
-        // since have minimongo to do that for us we'll just wait for the
-        // flux-helper to fire a COLLECTION_CHANGED dispatch after the
-        // increment update. Since we're doing that we'll just return the old
-        // state to prevent the UI from re-rendering twice.
-        return state;
-      case 'PLAYERS_COLLECTION_CHANGED':
-        // we don't have to merge the single doc that changes since minimongo
-        // keeps the entire cache for us. We'll just return the new minimongo state
-        // We *could* also return another fetch if sorting wasn't so easy here
-        let docs = _.clone(action.collection); // clone to prevent mutating action!!
-        return docs.sort((a, b) => b.score - a.score);
+      case 'COLLECTION_CHANGED':
+        // Place a duplicate of the collection in the store...
+        // @Todo Shaky...
+        let c = new Mongo.Collection(null);
+        action.collection.find().forEach(function(record) {
+          c.insert(record);
+        });
+        let newState = {};
+        newState[action.collection._name] = c;
+        return _.extend({}, state, newState);
       default:
         return state;
     }
   }
 };
+
+
 
 

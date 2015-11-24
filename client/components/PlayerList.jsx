@@ -1,7 +1,8 @@
 PlayerList = React.createClass({
   propTypes: {
     players: React.PropTypes.array.isRequired,
-    selectedId: React.PropTypes.string.isRequired
+    selectedId: React.PropTypes.string.isRequired,
+    doSelectPlayer: React.PropTypes.func.isRequired
   },
 
   render() {
@@ -21,9 +22,9 @@ PlayerList = React.createClass({
            return (
              <PlayerItem
                key={ player._id }
-               selected={ this.props.selectedId == player._id }
                player={ player }
-               selectPlayer = { this.props.selectPlayer }
+               selected={ this.props.selectedId == player._id }
+               doSelectPlayer={ this.props.doSelectPlayer.bind(null, player._id) }
              />
            );
          })

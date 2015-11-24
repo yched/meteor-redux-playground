@@ -23,9 +23,8 @@ let AppContainer = React.createClass({
 // could easily just return `state` for this small app
 let mapStateToProps = function (state) {
   return {
-    players: state.players,
+    players: state.collections.players,
     selectedId: state.userInterface.selectedId,
-    selectedPlayerName: state.userInterface.selectedPlayerName
   }
 };
 let mapDispatchToProps = (dispatch) => Redux.bindActionCreators(Actions, dispatch);

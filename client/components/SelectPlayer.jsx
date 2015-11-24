@@ -1,15 +1,15 @@
 SelectPlayer = React.createClass({
   propTypes: {
     selectedName: React.PropTypes.string,
-    selectedId: React.PropTypes.string,
+    doIncrementScore: React.PropTypes.func.isRequired
   },
 
   render() {
-    if (this.props.selectedPlayerName) {
+    if (this.props.selectedName) {
       return (
         <div className="details">
-          <div className="name">{ this.props.selectedPlayerName }</div>
-          <button className="inc" onClick={() => this.props.incrementScore(this.props.selectedId)}>
+          <div className="name">{ this.props.selectedName }</div>
+          <button className="inc" onClick={this.props.doIncrementScore.bind(null, 5)}>
             Add 5 points
           </button>
         </div>
