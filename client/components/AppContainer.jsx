@@ -21,15 +21,12 @@ let AppContainer = React.createClass({
 // this app we're sending everything at once, we're also splitting
 // it out into three properties to match previous state shape, you
 // could easily just return `state` for this small app
-
-function mapStateToProps(state) {
+let mapStateToProps = function (state) {
   return {
     players: state.players,
     selectedId: state.userInterface.selectedId,
     selectedPlayerName: state.userInterface.selectedPlayerName
-  };
-}
-
-Meteor.startup(function () {
-  this.AppContainer = connect(mapStateToProps, Actions)(AppContainer);
-});
+  }
+};
+let mapDispatchToProps = (dispatch) => Redux.bindActionCreators(Actions, dispatch);
+this.AppContainer = connect(mapStateToProps, mapDispatchToProps)(AppContainer);
