@@ -14,9 +14,8 @@ cosmos:browserify
 skinnygeek1010:flux-helpers
 standard-minifiers
 meteor-base
-mobile-experience
 mongo
 session
 tracker
-reload
 static-html
+mobile-experience
