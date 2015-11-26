@@ -14,10 +14,7 @@ const finalCreateStore = applyMiddleware(logger)(debugCreateStore);
 // note, this is an optional step to use middleware (we're auto console.log dispatches)
 // let createStoreWithMiddleware = applyMiddleware(logger)(createStore);
 // store = createStoreWithMiddleware(rootReducer);
-let rootReducer = combineReducers({
-  userInterface: Reducers.userInterface,
-  players: Reducers.players
-});
+let rootReducer = combineReducers(Reducers);
 store = finalCreateStore(rootReducer);
 
 // trigger action when this changes
