@@ -14,7 +14,6 @@ let AppContainer = React.createClass({
   },
 
   render() {
-    console.log('AppContainer props', this.props);
     return (<App {...this.props} />);
   }
 });
@@ -23,7 +22,6 @@ let mapStateToProps = createSelector(
   (state => state.players),
   (state => state.userInterface.selectedId),
   (players, selectedId) => {
-    console.log('SELECTOR', {players, selectedId});
     let selectedPlayer = _.findWhere(players, {_id: selectedId});
     let selectedName = selectedPlayer ? selectedPlayer.name : '';
     return {

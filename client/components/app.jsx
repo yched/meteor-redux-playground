@@ -11,7 +11,6 @@ App = React.createClass({
   },
 
   render() {
-    console.log('RENDERING APP with players', this.props.players);
     return (
       <div className="outer">
         <div className="logo"></div>

@@ -1,8 +1,7 @@
 const { createStore, combineReducers, applyMiddleware } = Redux;
 const { devTools, persistState } = ReduxDevTools;
-const { connectToMeteor } = MeteorRedux;
 
-debugToolEnabled = 1;
+debugToolEnabled = 0;
 
 const debugCreateStore = debugToolEnabled ? devTools()(
   persistState(window.location.href.match(/[?&]debug_session=([^&]+)\b/))(
@@ -21,4 +20,9 @@ let rootReducer = combineReducers({
 });
 store = finalCreateStore(rootReducer);
 
-connectToMeteor(store);
+// trigger action when this changes
+trackCollection(Players, (collection) => {
+  store.dispatch({
+    type: 'UPDATE_PLAYERS',
+  });
+});
