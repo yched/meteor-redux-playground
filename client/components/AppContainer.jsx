@@ -7,6 +7,11 @@ const { createSelector } = Reselect;
 let AppContainer = React.createClass({
   componentWillMount() {
     this.sub = Meteor.subscribe('players');
+    trackCollection(Players, (collection) => {
+      this.props.dispatch({
+        type: 'UPDATE_PLAYERS',
+      });
+    });
   },
 
   componentWillUnmount() {
@@ -39,6 +44,9 @@ let mapStateToProps = createSelector(
 //  }
 //};
 let mapDispatchToProps = (dispatch) => {
-  return {actions: Redux.bindActionCreators(Actions, dispatch)};
+  return {
+    actions: Redux.bindActionCreators(Actions, dispatch),
+    dispatch
+  };
 };
 this.AppContainer = connect(mapStateToProps, mapDispatchToProps)(AppContainer);

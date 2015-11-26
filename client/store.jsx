@@ -21,8 +21,8 @@ let rootReducer = combineReducers({
 store = finalCreateStore(rootReducer);
 
 // trigger action when this changes
-trackCollection(Players, (collection) => {
-  store.dispatch({
-    type: 'UPDATE_PLAYERS',
-  });
-});
+//trackCollection(Players, (collection) => {
+//  store.dispatch({
+//    type: 'UPDATE_PLAYERS',
+//  });
+//});
