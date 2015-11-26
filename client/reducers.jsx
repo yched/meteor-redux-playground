@@ -1,45 +1,28 @@
-// reducers allow you to 'slice' off a part of the single state object which
-// lets you think about the domain in a smaller picture. You could use one
-// reducer in a small app like this but in large apps this reducer could be
-// several hundred lines. See store.jsx to see how these reducers get 'combined'
-// into one single app state. We'll use two reducers, one for transient state
-// that the UI uses (selected id,name) and one for data (coming from Mongo)
+const { handleActions } = ReduxActions;
+const { bindReactiveData } = MeteorRedux;
 
-
-// these reducers *must* be pure to use time-travel dev-tools
-// never directly mutate the `state` param, use merge instead
 Reducers = {
-  userInterface(state = {}, action) {
-    switch (action.type) {
-      case 'SELECT_PLAYER':
-        // we happen to be replacing all the reducers state but with merge you
-        // could just return the selectedId and it would retain selectedPlayerName
-        return _.extend({}, state, {
-          selectedId: action.playerId,
-        });
-      default:
-        return state;
+  userInterface: handleActions({
+    'SELECT_PLAYER': (state, {playerId}) => {
+      return _.extend({}, state, {
+        selectedId: playerId,
+      });
     }
-  },
-  // using the ES6 default params instead of the manual check like above
-  collections(state = {}, action) {
-    switch (action.type) {
-      case 'COLLECTION_CHANGED':
-        // Place a duplicate of the collection in the store...
-        // @Todo Shaky...
-        let c = new Mongo.Collection(null);
-        action.collection.find().forEach(function(record) {
-          c.insert(record);
-        });
-        let newState = {};
-        newState[action.collection._name] = c;
-        return _.extend({}, state, newState);
-      default:
-        return state;
+  }, {selectedId: ''}),
+  players: handleActions({
+    'INCREMENT_SCORE': (state, {payload}) => {
+      //debugger;
+      Meteor.call('incrementScore', payload.playerId, payload.increment);
+      return state;
     }
-  }
+  }, [])
 };
-
-
-
-
+// @todo le Tracker là dedans rerun et redéclenche toutes les actions en permanence...
+// @todo A cause des devtools ??
+//Reducers.players = bindReactiveData(Reducers.players, () => Players.find({}, {sort: {score: -1}}).fetch());
+Reducers.players = bindReactiveData(Reducers.players, () => {
+  console.log('REACTIVE COLL');
+  Players.find({}, {sort: {score: -1}}).fetch();
+  return [{_id: 'foo', name: 'Foo', score: Math.floor(Math.random() * 10) * 10}];
+  return Players.find({}, {sort: {score: -1}}).fetch()
+});

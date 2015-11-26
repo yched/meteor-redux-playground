@@ -7,3 +7,6 @@ DevTools = ReactReduxDevTools.DevTools;
 DebugPanel = ReactReduxDevTools.DebugPanel;
 LogMonitor = ReactReduxDevTools.LogMonitor;
 connect = ReactRedux.connect;
+Reselect = require("reselect");
+ReduxActions = require("redux-actions");
+MeteorRedux = require("meteoredux");
