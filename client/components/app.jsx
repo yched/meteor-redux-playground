@@ -3,7 +3,7 @@
 App = React.createClass({
   propTypes: {
     players: React.PropTypes.array.isRequired,
-    selectedId: React.PropTypes.string,
+    selectedId: React.PropTypes.string.isRequired,
     actions: React.PropTypes.shape({
       selectPlayer: React.PropTypes.func.isRequired,
       incrementScore: React.PropTypes.func.isRequired
@@ -11,7 +11,7 @@ App = React.createClass({
   },
 
   render() {
-    console.log('PLAYAS', this.props.players);
+    console.log('RENDERING APP with players', this.props.players);
     return (
       <div className="outer">
         <div className="logo"></div>
