@@ -4,7 +4,7 @@ const { createSelector } = Reselect;
 // listening for changes. In a larger app you would have a container
 // for each major component.
 
-let AppContainer = React.createClass({
+AppContainer = React.createClass({
   componentWillMount() {
     this.sub = Meteor.subscribe('players');
     trackCollection(Players, (collection) => {
@@ -23,30 +23,27 @@ let AppContainer = React.createClass({
   }
 });
 
-let mapStateToProps = createSelector(
+// Use createSelector's memoization for the 'selectedName' derived data.
+let selectedNameSelector = createSelector(
   (state => state.players),
   (state => state.userInterface.selectedId),
   (players, selectedId) => {
     let selectedPlayer = _.findWhere(players, {_id: selectedId});
-    let selectedName = selectedPlayer ? selectedPlayer.name : '';
-    return {
-      players,
-      selectedId,
-      selectedName
-    }
+    return selectedPlayer ? selectedPlayer.name : '';
   }
 );
-//let mapStateToProps = function (state) {
-//  return {
-//    players: state.players,
-//    selectedId: state.userInterface.selectedId,
-//    selectedName: 'Foo',
-//  }
-//};
+let mapStateToProps = (state) => ({
+  ...state,
+  userInterface: {
+    ...state.userInterface,
+    selectedName: selectedNameSelector(state),
+  }
+});
+
 let mapDispatchToProps = (dispatch) => {
   return {
     actions: Redux.bindActionCreators(Actions, dispatch),
     dispatch
   };
 };
-this.AppContainer = connect(mapStateToProps, mapDispatchToProps)(AppContainer);
+AppContainer = connect(mapStateToProps, mapDispatchToProps)(AppContainer);

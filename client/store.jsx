@@ -10,16 +10,5 @@ const debugCreateStore = debugToolEnabled ? devTools()(
 ) : createStore;
 const finalCreateStore = applyMiddleware(logger)(debugCreateStore);
 
-// applyMiddleware takes createStore() and returns a new wrapped createStore
-// note, this is an optional step to use middleware (we're auto console.log dispatches)
-// let createStoreWithMiddleware = applyMiddleware(logger)(createStore);
-// store = createStoreWithMiddleware(rootReducer);
 let rootReducer = combineReducers(Reducers);
 store = finalCreateStore(rootReducer);
-
-// trigger action when this changes
-//trackCollection(Players, (collection) => {
-//  store.dispatch({
-//    type: 'UPDATE_PLAYERS',
-//  });
-//});

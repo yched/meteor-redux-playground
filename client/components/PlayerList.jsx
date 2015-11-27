@@ -1,35 +1,21 @@
-PlayerList = React.createClass({
-  propTypes: {
-    players: React.PropTypes.array.isRequired,
-    selectedId: React.PropTypes.string.isRequired,
-    selectPlayer: React.PropTypes.func.isRequired
-  },
-
-  render() {
-    if (!this.props.players.length) {
-      return (
-        <ul className="leaderboard">
-          <h2>Loading...</h2>
-          <h3>*Simulating* slow server to show optimistic UI</h3>
-        </ul>
-      );
+PlayerList = props => (
+  <ul className="leaderboard">
+    {
+      props.players.map((player) => {
+        return (
+          <PlayerItem
+            key={ player._id }
+            player={ player }
+            selected={ props.selectedId == player._id }
+            selectPlayer={ props.selectPlayer.bind(null, player._id) }
+          />
+        );
+      })
     }
-
-    return (
-     <ul className="leaderboard">
-       {
-         this.props.players.map((player) => {
-           return (
-             <PlayerItem
-               key={ player._id }
-               player={ player }
-               selected={ this.props.selectedId == player._id }
-               selectPlayer={ this.props.selectPlayer.bind(null, player._id) }
-             />
-           );
-         })
-       }
-     </ul>
-    );
-  }
-});
+  </ul>
+);
+PlayerList.propTypes = {
+  players: React.PropTypes.array.isRequired,
+  selectedId: React.PropTypes.string.isRequired,
+  selectPlayer: React.PropTypes.func.isRequired
+};

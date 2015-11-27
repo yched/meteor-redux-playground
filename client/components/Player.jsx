@@ -1,17 +1,12 @@
-PlayerItem = React.createClass({
-  propTypes: {
-    player: React.PropTypes.object.isRequired,
-    selected: React.PropTypes.bool,
-    selectPlayer: React.PropTypes.func.isRequired
-  },
-
-  render() {
-    return (
-      <li className={ 'player' + (this.props.selected ? ' selected' : '') }
-          onClick={ this.props.selectPlayer }>
-        <span className="name">{ this.props.player.name }</span>
-        <span className="score">{ this.props.player.score }</span>
-      </li>
-    );
-  }
-});
+PlayerItem = props => (
+  <li className={ 'player' + (props.selected ? ' selected' : '') }
+      onClick={ props.selectPlayer }>
+    <span className="name">{ props.player.name }</span>
+    <span className="score">{ props.player.score }</span>
+  </li>
+);
+PlayerItem.propTypes = {
+  player: React.PropTypes.object.isRequired,
+  selected: React.PropTypes.bool,
+  selectPlayer: React.PropTypes.func.isRequired
+};
