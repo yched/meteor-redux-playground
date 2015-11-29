@@ -6,24 +6,22 @@ App = props => (
 
     <div>
       <PlayerList players={props.players}
-                  selectedId={props.userInterface.selectedId}
+                  selectedId={props.selectedId}
                   selectPlayer={props.actions.selectPlayer}/>
     </div>
 
-    <SelectPlayer selectedName={props.userInterface.selectedName}
-                  incrementScore={props.actions.incrementScore.bind(null, props.userInterface.selectedId)} />
+    <SelectPlayer selectedName={props.selectedName}
+                  incrementScore={props.actions.incrementScore.bind(null, props.selectedId)} />
 
   </div>
 );
 App.propTypes = {
-  players: React.PropTypes.array.isRequired,
-  userInterface: React.PropTypes.shape({
-    selectedId: React.PropTypes.string.isRequired,
-    selectedName: React.PropTypes.string.isRequired,
-  }).isRequired,
+  players: ImmutablePropTypes.listOf(ImmutablePropTypes.map).isRequired,
+  selectedId: React.PropTypes.string.isRequired,
+  selectedName: React.PropTypes.string.isRequired,
+
   actions: React.PropTypes.shape({
     selectPlayer: React.PropTypes.func.isRequired,
     incrementScore: React.PropTypes.func.isRequired,
-    getUrl: React.PropTypes.func.isRequired
   }).isRequired
 };

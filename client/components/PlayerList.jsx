@@ -1,13 +1,13 @@
-PlayerList = props => (
+PlayerList = ({players, selectedId, selectPlayer}) => (
   <ul className="leaderboard">
     {
-      props.players.map((player) => {
+      players.map((player) => {
         return (
           <PlayerItem
-            key={ player._id }
+            key={ player.get('_id') }
             player={ player }
-            selected={ props.selectedId == player._id }
-            selectPlayer={ props.selectPlayer.bind(null, player._id) }
+            selected={ selectedId == player.get('_id') }
+            selectPlayer={ selectPlayer.bind(null, player.get('_id')) }
           />
         );
       })
@@ -15,7 +15,7 @@ PlayerList = props => (
   </ul>
 );
 PlayerList.propTypes = {
-  players: React.PropTypes.array.isRequired,
+  players: ImmutablePropTypes.listOf(ImmutablePropTypes.map).isRequired,
   selectedId: React.PropTypes.string.isRequired,
   selectPlayer: React.PropTypes.func.isRequired
 };

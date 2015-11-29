@@ -25,20 +25,21 @@ AppContainer = React.createClass({
 
 // Use createSelector's memoization for the 'selectedName' derived data.
 let selectedNameSelector = createSelector(
-  (state => state.players),
-  (state => state.userInterface.selectedId),
+  (state => state.get('players')),
+  (state => state.get('userInterface').get('selectedId')),
   (players, selectedId) => {
-    let selectedPlayer = _.findWhere(players, {_id: selectedId});
-    return selectedPlayer ? selectedPlayer.name : '';
+    let selectedPlayer = players.find(player => player.get('_id') === selectedId);
+    let selectedName = selectedPlayer ? selectedPlayer.get('name') : '';
+    return selectedName;
   }
 );
-let mapStateToProps = (state) => ({
-  ...state,
-  userInterface: {
-    ...state.userInterface,
-    selectedName: selectedNameSelector(state),
-  }
-});
+let mapStateToProps = (state) => {
+  return {
+    players: state.get('players'),
+    selectedId: state.getIn(['userInterface', 'selectedId']),
+    selectedName: selectedNameSelector(state)
+  };
+};
 
 let mapDispatchToProps = (dispatch) => {
   return {

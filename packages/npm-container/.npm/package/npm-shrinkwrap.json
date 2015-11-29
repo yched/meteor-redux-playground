@@ -1,13 +1,5 @@
 {
   "dependencies": {
-    "babel-plugin-react-transform": {
-      "version": "1.1.1",
-      "dependencies": {
-        "path-parse": {
-          "version": "1.0.5"
-        }
-      }
-    },
     "externalify": {
       "version": "0.1.0",
       "dependencies": {
@@ -162,6 +154,9 @@
         }
       }
     },
+    "immutable": {
+      "version": "3.7.5"
+    },
     "react": {
       "version": "0.14.3",
       "dependencies": {
@@ -223,6 +218,12 @@
           }
         }
       }
+    },
+    "react-addons-pure-render-mixin": {
+      "version": "0.14.3"
+    },
+    "react-immutable-proptypes": {
+      "version": "1.5.0"
     },
     "react-redux": {
       "version": "4.0.0",
@@ -327,8 +328,73 @@
               }
             }
           }
+        },
+        "react": {
+          "version": "0.14.3",
+          "dependencies": {
+            "envify": {
+              "version": "3.4.0",
+              "dependencies": {
+                "through": {
+                  "version": "2.3.8"
+                },
+                "jstransform": {
+                  "version": "10.1.0",
+                  "dependencies": {
+                    "base62": {
+                      "version": "0.1.1"
+                    },
+                    "esprima-fb": {
+                      "version": "13001.1001.0-dev-harmony-fb"
+                    },
+                    "source-map": {
+                      "version": "0.1.31",
+                      "dependencies": {
+                        "amdefine": {
+                          "version": "1.0.0"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "fbjs": {
+              "version": "0.3.2",
+              "dependencies": {
+                "core-js": {
+                  "version": "1.2.6"
+                },
+                "loose-envify": {
+                  "version": "1.1.0",
+                  "dependencies": {
+                    "js-tokens": {
+                      "version": "1.0.2"
+                    }
+                  }
+                },
+                "promise": {
+                  "version": "7.0.4",
+                  "dependencies": {
+                    "asap": {
+                      "version": "2.0.3"
+                    }
+                  }
+                },
+                "ua-parser-js": {
+                  "version": "0.7.9"
+                },
+                "whatwg-fetch": {
+                  "version": "0.9.0"
+                }
+              }
+            }
+          }
         }
       }
+    },
+    "redux-immutablejs": {
+      "version": "0.0.7"
     },
     "reselect": {
       "version": "2.0.1"

@@ -1,4 +1,5 @@
-const { createStore, combineReducers, applyMiddleware } = Redux;
+const { createStore, applyMiddleware } = Redux;
+const { combineReducers } = ReduxImmutable;
 const { devTools, persistState } = ReduxDevTools;
 
 debugToolEnabled = 0;
@@ -11,4 +12,6 @@ const debugCreateStore = debugToolEnabled ? devTools()(
 const finalCreateStore = applyMiddleware(logger)(debugCreateStore);
 
 let rootReducer = combineReducers(Reducers);
-store = finalCreateStore(rootReducer);
+const state = Immutable.fromJS({});
+
+store = finalCreateStore(rootReducer, rootReducer(state));

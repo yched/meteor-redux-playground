@@ -1,19 +1,19 @@
-const { handleActions } = ReduxActions;
+const { createReducer } = ReduxImmutable;
+const immutable = Immutable.fromJS;
 
 Reducers = {
-  userInterface: handleActions({
-    'SELECT_PLAYER': (state, {payload: playerId}) => ({
-      ...state,
+  userInterface: createReducer(immutable({selectedId: ''}), {
+    'SELECT_PLAYER': (state, {payload: playerId}) => state.merge({
       selectedId: playerId
     })
-  }, {selectedId: ''}),
-  players: handleActions({
+  }),
+  players: createReducer(immutable([]), {
     'INCREMENT_SCORE': (state, {payload: {playerId, increment}}) => {
       Meteor.call('incrementScore', playerId, increment);
       return state;
     },
     'UPDATE_PLAYERS': () => {
-      return Players.find({}, {sort: {score: -1}}).fetch();
+      return immutable(Players.find({}, {sort: {score: -1}}).fetch());
     }
-  }, [])
+  })
 };

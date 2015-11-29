@@ -9,3 +9,8 @@ LogMonitor = ReactReduxDevTools.LogMonitor;
 connect = ReactRedux.connect;
 Reselect = require("reselect");
 ReduxActions = require("redux-actions");
+Immutable = require("immutable");
+ReduxImmutable = require("redux-immutablejs");
+ImmutablePropTypes = require("react-immutable-proptypes");
+PureRenderMixin = require('react-addons-pure-render-mixin');
+

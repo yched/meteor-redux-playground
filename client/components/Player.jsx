@@ -1,12 +1,12 @@
-PlayerItem = props => (
-  <li className={ 'player' + (props.selected ? ' selected' : '') }
-      onClick={ props.selectPlayer }>
-    <span className="name">{ props.player.name }</span>
-    <span className="score">{ props.player.score }</span>
+PlayerItem = ({player, selected, selectPlayer}) => (
+  <li className={ 'player' + (selected ? ' selected' : '') }
+      onClick={ selectPlayer }>
+    <span className="name">{ player.get('name') }</span>
+    <span className="score">{ player.get('score') }</span>
   </li>
 );
 PlayerItem.propTypes = {
-  player: React.PropTypes.object.isRequired,
+  player: ImmutablePropTypes.map.isRequired,
   selected: React.PropTypes.bool,
   selectPlayer: React.PropTypes.func.isRequired
 };
