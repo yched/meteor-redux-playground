@@ -1,4 +1,5 @@
 const { createSelector } = Reselect;
+import actions from '../store/actions'
 
 // AppContainer is responsible for fetching data from the store and
 // listening for changes. In a larger app you would have a container
@@ -43,7 +44,7 @@ let mapStateToProps = (state) => {
 
 let mapDispatchToProps = (dispatch) => {
   return {
-    actions: Redux.bindActionCreators(Actions, dispatch),
+    actions: Redux.bindActionCreators(actions, dispatch),
     dispatch
   };
 };

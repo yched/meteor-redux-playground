@@ -2,6 +2,8 @@ const { createStore, applyMiddleware } = Redux;
 const { combineReducers } = ReduxImmutable;
 const { devTools, persistState } = ReduxDevTools;
 
+import * as reducers from './reducers';
+
 debugToolEnabled = 0;
 
 const debugCreateStore = debugToolEnabled ? devTools()(
@@ -11,7 +13,7 @@ const debugCreateStore = debugToolEnabled ? devTools()(
 ) : createStore;
 const finalCreateStore = applyMiddleware(logger)(debugCreateStore);
 
-let rootReducer = combineReducers(Reducers);
+let rootReducer = combineReducers(reducers);
 const state = Immutable.fromJS({});
 
-store = finalCreateStore(rootReducer, rootReducer(state));
+export default finalCreateStore(rootReducer, rootReducer(state));

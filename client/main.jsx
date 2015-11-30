@@ -1,3 +1,11 @@
+import store from './store/store';
+
+Provider = ReactRedux.Provider;
+DevTools = ReactReduxDevTools.DevTools;
+DebugPanel = ReactReduxDevTools.DebugPanel;
+LogMonitor = ReactReduxDevTools.LogMonitor;
+connect = ReactRedux.connect;
+
 Meteor.startup(function() {
   ReactDOM.render(
     <div>
