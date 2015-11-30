@@ -2,7 +2,7 @@
 // and handing it off to the reducer
 
 // console.log our state changes
-logger = store => next => action => {
+export default store => next => action => {
   log('[Dispatching]', action);
   // essentially call 'dispatch'
   let result = next(action);

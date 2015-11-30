@@ -3,6 +3,7 @@ const { combineReducers } = ReduxImmutable;
 const { devTools, persistState } = ReduxDevTools;
 
 import * as reducers from './reducers';
+import logger from './middlewares/logger';
 
 debugToolEnabled = 0;
 

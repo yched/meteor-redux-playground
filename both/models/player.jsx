@@ -1,8 +1,6 @@
-var exports = module.exports = {};
+Players = new Mongo.Collection("players");
 
-exports.Players = new Mongo.Collection("players");
-
-exports.Player = {
+Player = {
   create() {
     // Players.insert(...)
   },
