@@ -1,4 +1,5 @@
 const { createSelector } = Reselect;
+const { connect } = ReactRedux;
 import actions from '../store/actions'
 
 // AppContainer is responsible for fetching data from the store and

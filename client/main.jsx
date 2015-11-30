@@ -1,10 +1,11 @@
+import '../both/models/player';
+import '../both/models/methods';
 import store from './store/store';
 
-Provider = ReactRedux.Provider;
-DevTools = ReactReduxDevTools.DevTools;
-DebugPanel = ReactReduxDevTools.DebugPanel;
-LogMonitor = ReactReduxDevTools.LogMonitor;
-connect = ReactRedux.connect;
+let Provider = ReactRedux.Provider;
+let DevTools = ReactReduxDevTools.DevTools;
+let DebugPanel = ReactReduxDevTools.DebugPanel;
+let LogMonitor = ReactReduxDevTools.LogMonitor;
 
 Meteor.startup(function() {
   ReactDOM.render(
