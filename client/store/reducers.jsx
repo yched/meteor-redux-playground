@@ -1,18 +1,19 @@
-const { createReducer } = ReduxImmutable;
-const immutable = Immutable.fromJS;
-import {Players} from '../../both/models/player';
+import { createReducer } from 'redux-immutablejs';
+import * as Immutable from 'immutable';
+import { Players } from '../../both/models/player';
 
+console.log(Immutable);
 export default {
-  players: createReducer(immutable([]), {
+  players: createReducer(Immutable.fromJS([]), {
     'INCREMENT_SCORE': (state, {payload: {playerId, increment}}) => {
       Meteor.call('incrementScore', playerId, increment);
       return state;
     },
     'UPDATE_PLAYERS': () => {
-      return immutable(Players.find({}, {sort: {score: -1}}).fetch());
+      return Immutable.fromJS(Players.find({}, {sort: {score: -1}}).fetch());
     }
   }),
-  userinterface: createReducer(immutable({selectedId: ''}), {
+  userInterface: createReducer(Immutable.fromJS({selectedId: ''}), {
     'SELECT_PLAYER': (state, {payload: playerId}) => state.merge({
       selectedId: playerId
     })

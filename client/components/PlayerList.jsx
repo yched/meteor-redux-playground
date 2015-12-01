@@ -1,4 +1,7 @@
-PlayerList = ({players, selectedId, selectPlayer}) => (
+import { listOf, map } from 'react-immutable-proptypes';
+import PlayerItem from './Player';
+
+let PlayerList = ({players, selectedId, selectPlayer}) => (
   <ul className="leaderboard">
     {
       players.map((player) => {
@@ -15,7 +18,9 @@ PlayerList = ({players, selectedId, selectPlayer}) => (
   </ul>
 );
 PlayerList.propTypes = {
-  players: ImmutablePropTypes.listOf(ImmutablePropTypes.map).isRequired,
+  players: listOf(map).isRequired,
   selectedId: React.PropTypes.string.isRequired,
   selectPlayer: React.PropTypes.func.isRequired
 };
+
+export default PlayerList;

@@ -1,13 +1,15 @@
-const { createSelector } = Reselect;
-const { connect } = ReactRedux;
+import { createSelector } from 'reselect';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import actions from '../store/actions'
 import {Players} from '../../both/models/player';
+import App from './app';
 
 // AppContainer is responsible for fetching data from the store and
 // listening for changes. In a larger app you would have a container
 // for each major component.
 
-AppContainer = React.createClass({
+let AppContainer = React.createClass({
   componentWillMount() {
     this.sub = Meteor.subscribe('players');
     trackCollection(Players, (collection) => {
@@ -45,8 +47,8 @@ let mapStateToProps = (state) => {
 
 let mapDispatchToProps = (dispatch) => {
   return {
-    actions: Redux.bindActionCreators(actions, dispatch),
+    actions: bindActionCreators(actions, dispatch),
     dispatch
   };
 };
-AppContainer = connect(mapStateToProps, mapDispatchToProps)(AppContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(AppContainer);

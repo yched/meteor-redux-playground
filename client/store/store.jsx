@@ -1,11 +1,12 @@
-const { createStore, applyMiddleware } = Redux;
-const { combineReducers } = ReduxImmutable;
-const { devTools, persistState } = ReduxDevTools;
+import { createStore, applyMiddleware } from 'redux';
+import { combineReducers } from 'redux-immutablejs';
+import { devTools, persistState } from 'redux-devtools';
+import * as Immutable from 'immutable';
 
 import * as reducers from './reducers';
 import logger from './middlewares/logger';
 
-debugToolEnabled = 0;
+let debugToolEnabled = 0;
 
 const debugCreateStore = debugToolEnabled ? devTools()(
   persistState(window.location.href.match(/[?&]debug_session=([^&]+)\b/))(

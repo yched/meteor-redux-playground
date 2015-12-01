@@ -1,4 +1,4 @@
-SelectPlayer = props => {
+let SelectPlayer = props => {
   if (props.selectedName) {
     return (
       <div className="details">
@@ -23,3 +23,5 @@ SelectPlayer.propTypes = {
 SelectPlayer.defaultProps = {
   incrementLevel: 5
 };
+
+export default SelectPlayer;

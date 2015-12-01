@@ -1,4 +1,6 @@
-PlayerItem = ({player, selected, selectPlayer}) => (
+import { map } from 'react-immutable-proptypes';
+
+let PlayerItem = ({player, selected, selectPlayer}) => (
   <li className={ 'player' + (selected ? ' selected' : '') }
       onClick={ selectPlayer }>
     <span className="name">{ player.get('name') }</span>
@@ -6,7 +8,9 @@ PlayerItem = ({player, selected, selectPlayer}) => (
   </li>
 );
 PlayerItem.propTypes = {
-  player: ImmutablePropTypes.map.isRequired,
+  player: map.isRequired,
   selected: React.PropTypes.bool,
   selectPlayer: React.PropTypes.func.isRequired
 };
+
+export default PlayerItem;

@@ -11,8 +11,8 @@ export default store => next => action => {
 };
 
 function log() {
-  if (__debug_redux) {
+  //if (__debug_redux) {
     console.log.apply(console, arguments);
-  }
+  //}
 }
-__debug_redux = true
+//__debug_redux = true

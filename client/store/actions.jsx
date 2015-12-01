@@ -1,4 +1,4 @@
-const {createAction} = ReduxActions;
+import {createAction} from 'redux-actions';
 
 export default {
   incrementScore: createAction('INCREMENT_SCORE', (...[playerId, increment]) => ({playerId, increment})),

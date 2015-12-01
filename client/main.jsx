@@ -1,13 +1,10 @@
 import '../both/models/player';
-import '../both/models/player';
 import '../both/models/methods';
 
 import store from './store/store';
-
-let Provider = ReactRedux.Provider;
-let DevTools = ReactReduxDevTools.DevTools;
-let DebugPanel = ReactReduxDevTools.DebugPanel;
-let LogMonitor = ReactReduxDevTools.LogMonitor;
+import AppContainer from './components/AppContainer';
+import { Provider } from 'react-redux';
+import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
 
 Meteor.startup(function() {
   ReactDOM.render(
@@ -15,7 +12,7 @@ Meteor.startup(function() {
       <Provider store={store}>
         <AppContainer />
       </Provider>
-      { debugToolEnabled ?
+      { false ?
         <DebugPanel top right bottom>
           <DevTools store={store} monitor={LogMonitor} />
         </DebugPanel>

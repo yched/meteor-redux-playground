@@ -1,4 +1,8 @@
-App = props => (
+import { listOf, map } from 'react-immutable-proptypes';
+import PlayerList from './PlayerList';
+import SelectPlayer from './SelectPlayer';
+
+let App = props => (
   <div className="outer">
     <div className="logo"></div>
     <h1 className="title">Leaderboard</h1>
@@ -16,7 +20,7 @@ App = props => (
   </div>
 );
 App.propTypes = {
-  players: ImmutablePropTypes.listOf(ImmutablePropTypes.map).isRequired,
+  players: listOf(map).isRequired,
   selectedId: React.PropTypes.string.isRequired,
   selectedName: React.PropTypes.string.isRequired,
 
@@ -25,3 +29,5 @@ App.propTypes = {
     incrementScore: React.PropTypes.func.isRequired,
   }).isRequired
 };
+
+export default App;
