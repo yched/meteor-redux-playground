@@ -1,5 +1,6 @@
 const { createReducer } = ReduxImmutable;
 const immutable = Immutable.fromJS;
+import {Players} from '../../both/models/player';
 
 export default {
   players: createReducer(immutable([]), {

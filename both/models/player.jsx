@@ -1,6 +1,6 @@
-Players = new Mongo.Collection("players");
+export let Players = new Mongo.Collection("players");
 
-Player = {
+export let Player = {
   create() {
     // Players.insert(...)
   },

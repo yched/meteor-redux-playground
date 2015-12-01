@@ -1,4 +1,5 @@
-/*global alt:true */
+import {Players} from '../both/models/player';
+
 console.log("Starting Leaderboard Server...");
 
 // run fixtures if db is empty

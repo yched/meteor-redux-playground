@@ -1,6 +1,7 @@
 const { createSelector } = Reselect;
 const { connect } = ReactRedux;
 import actions from '../store/actions'
+import {Players} from '../../both/models/player';
 
 // AppContainer is responsible for fetching data from the store and
 // listening for changes. In a larger app you would have a container
@@ -31,8 +32,7 @@ let selectedNameSelector = createSelector(
   (state => state.get('userInterface').get('selectedId')),
   (players, selectedId) => {
     let selectedPlayer = players.find(player => player.get('_id') === selectedId);
-    let selectedName = selectedPlayer ? selectedPlayer.get('name') : '';
-    return selectedName;
+    return selectedPlayer ? selectedPlayer.get('name') : '';
   }
 );
 let mapStateToProps = (state) => {

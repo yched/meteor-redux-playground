@@ -1,5 +1,7 @@
 import '../both/models/player';
+import '../both/models/player';
 import '../both/models/methods';
+
 import store from './store/store';
 
 let Provider = ReactRedux.Provider;

@@ -1,5 +1,5 @@
-import './startup';
-import './publications';
+import './startup.jsx';
+import './publications.jsx';
 import '../both/models/player';
 import '../both/models/methods';
 
