@@ -1,7 +1,8 @@
 import { listOf, map } from 'react-immutable-proptypes';
+import { compose, pure, setPropTypes } from 'recompose';
 import PlayerItem from './Player';
 
-let PlayerList = ({players, selectedId, selectPlayer}) => (
+const PlayerList = ({players, selectedId, selectPlayer}) => (
   <ul className="leaderboard">
     {
       players.map((player) => {
@@ -17,10 +18,13 @@ let PlayerList = ({players, selectedId, selectPlayer}) => (
     }
   </ul>
 );
-PlayerList.propTypes = {
-  players: listOf(map).isRequired,
-  selectedId: React.PropTypes.string.isRequired,
-  selectPlayer: React.PropTypes.func.isRequired
-};
 
-export default PlayerList;
+export default compose(
+  pure,
+  setPropTypes({
+    players: listOf(map).isRequired,
+    selectedId: React.PropTypes.string.isRequired,
+    selectPlayer: React.PropTypes.func.isRequired
+  })
+)(PlayerList);
+
