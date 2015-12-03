@@ -1,5 +1,6 @@
-import { map } from 'react-immutable-proptypes';
+import React from 'react';
 import { compose, pure, setPropTypes } from 'recompose';
+import { map } from 'react-immutable-proptypes';
 
 const PlayerItem = ({player, selected, selectPlayer}) => (
   <li className={ 'player' + (selected ? ' selected' : '') }

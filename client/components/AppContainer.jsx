@@ -1,3 +1,4 @@
+import React from 'react';
 import { createSelector } from 'reselect';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';

@@ -1,3 +1,4 @@
+import React from 'react';
 import { compose, pure, setPropTypes, defaultProps } from 'recompose';
 
 const SelectPlayer = props => {

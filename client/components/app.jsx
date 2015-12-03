@@ -1,5 +1,6 @@
-import { listOf, map } from 'react-immutable-proptypes';
+import React from 'react';
 import { compose, pure, setPropTypes } from 'recompose';
+import { listOf, map } from 'react-immutable-proptypes';
 import PlayerList from './PlayerList';
 import SelectPlayer from './SelectPlayer';
 
