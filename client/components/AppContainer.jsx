@@ -2,15 +2,13 @@ import React from 'react';
 import { createSelector } from 'reselect';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import visualizeRender from 'react-render-visualizer-decorator';
 import actions from '../store/actions'
 import {Players} from '../../both/models/player';
 import App from './app';
 
-// AppContainer is responsible for fetching data from the store and
-// listening for changes. In a larger app you would have a container
-// for each major component.
-
-let AppContainer = React.createClass({
+@visualizeRender
+class AppContainer extends React.Component {
   componentWillMount() {
     this.sub = Meteor.subscribe('players');
     trackCollection(Players, (collection) => {
@@ -18,16 +16,16 @@ let AppContainer = React.createClass({
         type: 'UPDATE_PLAYERS',
       });
     });
-  },
+  }
 
   componentWillUnmount() {
     this.sub.stop();
-  },
+  }
 
   render() {
     return (<App {...this.props} />);
   }
-});
+};
 
 // Use createSelector's memoization for the 'selectedName' derived data.
 let selectedNameSelector = createSelector(

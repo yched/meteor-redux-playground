@@ -12,7 +12,7 @@ const PlayerList = ({players, selectedId, selectPlayer}) => (
             key={ player.get('_id') }
             player={ player }
             selected={ selectedId == player.get('_id') }
-            selectPlayer={ selectPlayer.bind(null, player.get('_id')) }
+            selectPlayer={ selectPlayer }
           />
         );
       })

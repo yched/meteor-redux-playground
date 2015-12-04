@@ -17,7 +17,8 @@ const App = props => (
     </div>
 
     <SelectPlayer selectedName={props.selectedName}
-                  incrementScore={props.actions.incrementScore.bind(null, props.selectedId)} />
+                  selectedId = {props.selectedId}
+                  incrementScore={props.actions.incrementScore} />
 
   </div>
 );
