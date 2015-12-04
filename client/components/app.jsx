@@ -3,6 +3,8 @@ import { compose, pure, setPropTypes } from 'recompose';
 import { listOf, map } from 'react-immutable-proptypes';
 import PlayerList from './PlayerList';
 import SelectPlayer from './SelectPlayer';
+import { DragDropContext } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
 
 const App = props => (
   <div className="outer">
@@ -23,7 +25,7 @@ const App = props => (
   </div>
 );
 
-export default compose(
+export default DragDropContext(HTML5Backend)(compose(
   pure,
   setPropTypes({
     players: listOf(map).isRequired,
@@ -35,5 +37,5 @@ export default compose(
       incrementScore: React.PropTypes.func.isRequired,
     }).isRequired
   })
-)(App);
+)(App));
 

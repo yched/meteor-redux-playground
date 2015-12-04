@@ -2,13 +2,15 @@ import React from 'react';
 import { compose, pure, setPropTypes } from 'recompose';
 import { listOf, map } from 'react-immutable-proptypes';
 import PlayerItem from './Player';
+import DraggablePlayerItem from './DraggablePlayer';
 
 const PlayerList = ({players, selectedId, selectPlayer}) => (
   <ul className="leaderboard">
     {
-      players.map((player) => {
+      players.map((player, index) => {
         return (
-          <PlayerItem
+          <DraggablePlayerItem
+            index={index}
             key={ player.get('_id') }
             player={ player }
             selected={ selectedId == player.get('_id') }

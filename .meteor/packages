@@ -16,7 +16,6 @@ mobile-experience
 msavin:mongol
 jquery
 
-#grigio:babel
 webpack:webpack
 
 react-meteor-data
