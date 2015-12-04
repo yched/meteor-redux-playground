@@ -1,7 +1,7 @@
 import React from 'react';
 import { compose, pure, setPropTypes, defaultProps } from 'recompose';
 
-const SelectPlayer = props => {
+let SelectPlayer = props => {
   if (props.selectedName) {
     return (
       <div className="details">
@@ -20,7 +20,7 @@ const SelectPlayer = props => {
 };
 
 export default compose(
-  pure,
+  //pure,
   setPropTypes({
     selectedName: React.PropTypes.string,
     incrementScore: React.PropTypes.func.isRequired,
@@ -29,4 +29,4 @@ export default compose(
   defaultProps({
     incrementLevel: 5
   })
-)(SelectPlayer);
+)(SelectPlayer);;

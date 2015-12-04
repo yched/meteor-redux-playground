@@ -1,8 +1,10 @@
 import React from 'react';
+import reactMixin from 'react-mixin';
+import ReactRenderVisualizer from 'react-render-visualizer';
 import { compose, pure, setPropTypes } from 'recompose';
 import { map } from 'react-immutable-proptypes';
 
-const PlayerItem = ({player, selected, selectPlayer}) => (
+let PlayerItem = ({player, selected, selectPlayer}) => (
   <li className={ 'player' + (selected ? ' selected' : '') }
       onClick={ selectPlayer }>
     <span className="name">{ player.get('name') }</span>
@@ -10,11 +12,15 @@ const PlayerItem = ({player, selected, selectPlayer}) => (
   </li>
 );
 
-export default compose(
-  pure,
+PlayerItem = compose(
+  //pure,
   setPropTypes({
     player: map.isRequired,
     selected: React.PropTypes.bool,
     selectPlayer: React.PropTypes.func.isRequired
   })
 )(PlayerItem);
+
+//reactMixin(PlayerItem.prototype, ReactRenderVisualizer);
+
+export default PlayerItem;

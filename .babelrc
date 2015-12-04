@@ -6,8 +6,10 @@
   "extra": {
     "react-transform": {
       "transforms": [{
-        "transform": "react-transform-render-visualizer"
-      }]
+         "transform": "react-transform-hmr",
+         "imports": ["react"],
+         "locals": ["module"]
+       }]
     }
   }
 }
