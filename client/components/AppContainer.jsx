@@ -7,7 +7,7 @@ import actions from '../store/actions'
 import {Players} from '../../both/models/player';
 import App from './app';
 
-@visualizeRender
+//@visualizeRender
 class AppContainer extends React.Component {
   componentWillMount() {
     this.sub = Meteor.subscribe('players');
