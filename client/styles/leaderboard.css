@@ -61,6 +61,13 @@ body {
   border-left: 4px solid white;
 }
 
+.draggable-player.dragging {
+  background: #ffcccc;
+}
+.draggable-player.dragging .player {
+  visibility: hidden;
+}
+
 .player:before {
   color: #999;
   content: counter(ol-counter);

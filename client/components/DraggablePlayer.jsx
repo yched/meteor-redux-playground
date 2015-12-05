@@ -7,7 +7,7 @@ import PlayerItem from './Player';
 
 let DraggablePlayerItem = (props) => {
   return props.connectDropTarget(props.connectDragSource(
-    <div style={{ opacity: props.isDragging ? 0.5 : 1 }}>
+    <div style={{ opacity: props.isDragging ? 0.5 : 1 }} className={'draggable-player' + (props.isDragging ? ' dragging' : '')}>
       <PlayerItem {...props} />
     </div>
   ));
@@ -26,12 +26,21 @@ DraggablePlayerItem = compose(
 const cardSource = {
   beginDrag(props) {
     return {
-      _id: props.player.get('_id'),
-      index: props.index
+      playerId: props.player.get('_id'),
+      index: props.player.get('index'),
+      originalIndex: props.player.get('index'),
     };
   },
   endDrag(props, monitor) {
-    console.log(monitor.getDropResult());
+    if (monitor.didDrop()) {
+      props.dropPlayer();
+    }
+    else {
+      // Put the item back in its original position.
+      // @todo not good enough for concurrent edits...
+      const {playerId, originalIndex} = monitor.getItem();
+      props.dragPlayer(playerId, originalIndex);
+    }
   }
 };
 function sourceCollect(connect, monitor) {
@@ -77,8 +86,7 @@ const cardTarget = {
     }
 
     // Time to actually perform the action
-    console.log(props.player.get('name') + ' ' + hoverIndex);
-    props.dragPlayer(dragIndex, hoverIndex);
+    props.dragPlayer(monitor.getItem().playerId, hoverIndex);
 
     // Note: we're mutating the monitor item here!
     // Generally it's better to avoid mutations,
@@ -86,12 +94,12 @@ const cardTarget = {
     // to avoid expensive index searches.
     monitor.getItem().index = hoverIndex;
   },
-  drop(props) {
-    return {
-      target: props.player.get('_id'),
-      index: props.index
-    };
-  }
+  //drop(props) {
+  //  return {
+  //    target: props.player.get('_id'),
+  //    index: props.index
+  //  };
+  //}
 };
 function targetCollect(connect, monitor) {
   return {
