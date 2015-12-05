@@ -33,9 +33,8 @@ export default {
       return players;
     }
   }),
-  userInterface: createReducer(Immutable.fromJS({selectedId: ''}), {
-    'SELECT_PLAYER': (userInterface, {payload: playerId}) => userInterface.merge({
-      selectedId: playerId
-    })
+  userInterface: createReducer(Immutable.fromJS({selectedId: '', sort: 'index'}), {
+    'SELECT_PLAYER': (userInterface, {payload: playerId}) => userInterface.set('selectedId', playerId),
+    'SET_SORTING': (userInterface, {payload: sort}) => userInterface.set('sort', sort)
   })
 }

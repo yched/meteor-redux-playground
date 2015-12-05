@@ -12,6 +12,12 @@ const App = props => (
     <h1 className="title">Leaderboard</h1>
     <div className="subtitle">Select a scientist to give them points</div>
 
+
+    <input type="radio" name="sorting" value="index" defaultChecked={props.sort === 'index'} onClick={() => props.actions.setSorting('index')} />
+    Manual sort
+    <input type="radio" name="sorting" value="score" defaultChecked={props.sort === 'score'} onClick={() => props.actions.setSorting('score')} />
+    Sort by scores
+
     <div>
       <PlayerList players={props.players}
                   selectedId={props.selectedId}

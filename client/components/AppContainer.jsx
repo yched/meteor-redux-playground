@@ -10,7 +10,7 @@ import App from './app';
 //@visualizeRender
 class AppContainer extends React.Component {
   componentWillMount() {
-    this.sub = Meteor.subscribe('players');
+    this.sub = Meteor.subscribe('players', this.props.sort);
     trackCollection(Players, (collection) => {
       this.props.dispatch({
         type: 'UPDATE_PLAYERS',
@@ -40,6 +40,7 @@ let mapStateToProps = (state) => {
   return {
     players: state.get('players'),
     selectedId: state.getIn(['userInterface', 'selectedId']),
+    sort: state.getIn(['userInterface', 'sort']),
     selectedName: selectedNameSelector(state)
   };
 };
