@@ -78,7 +78,7 @@ const cardTarget = {
 
     // Time to actually perform the action
     console.log(props.player.get('name') + ' ' + hoverIndex);
-    props.dragPlayer(monitor.getItem()._id, hoverIndex);
+    props.dragPlayer(dragIndex, hoverIndex);
 
     // Note: we're mutating the monitor item here!
     // Generally it's better to avoid mutations,
@@ -93,19 +93,6 @@ const cardTarget = {
     };
   }
 };
-//moveCard(dragIndex, hoverIndex) {
-//  const { cards } = this.state;
-//  const dragCard = cards[dragIndex];
-//
-//  this.setState(update(this.state, {
-//    cards: {
-//      $splice: [
-//        [dragIndex, 1],
-//        [hoverIndex, 0, dragCard]
-//      ]
-//    }
-//  }));
-//}
 function targetCollect(connect, monitor) {
   return {
     connectDropTarget: connect.dropTarget()
