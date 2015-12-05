@@ -4,7 +4,7 @@ import { listOf, map } from 'react-immutable-proptypes';
 import PlayerItem from './Player';
 import DraggablePlayerItem from './DraggablePlayer';
 
-const PlayerList = ({players, selectedId, selectPlayer}) => (
+const PlayerList = ({players, selectedId, selectPlayer, dragPlayer}) => (
   <ul className="leaderboard">
     {
       players.map((player, index) => {
@@ -15,6 +15,7 @@ const PlayerList = ({players, selectedId, selectPlayer}) => (
             player={ player }
             selected={ selectedId == player.get('_id') }
             selectPlayer={ selectPlayer }
+            dragPlayer={ dragPlayer }
           />
         );
       })

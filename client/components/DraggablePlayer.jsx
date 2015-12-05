@@ -1,4 +1,5 @@
 import React from 'react';
+import { findDOMNode } from 'react-dom';
 import { compose, pure, setPropTypes } from 'recompose';
 import { map } from 'react-immutable-proptypes';
 import { DragSource, DropTarget } from 'react-dnd';
@@ -25,7 +26,7 @@ DraggablePlayerItem = compose(
 const cardSource = {
   beginDrag(props) {
     return {
-      id: props.player.get('_id'),
+      _id: props.player.get('_id'),
       index: props.index
     };
   },
@@ -76,7 +77,8 @@ const cardTarget = {
     }
 
     // Time to actually perform the action
-    //props.moveCard(dragIndex, hoverIndex);
+    console.log(props.player.get('name') + ' ' + hoverIndex);
+    props.dragPlayer(monitor.getItem()._id, hoverIndex);
 
     // Note: we're mutating the monitor item here!
     // Generally it's better to avoid mutations,

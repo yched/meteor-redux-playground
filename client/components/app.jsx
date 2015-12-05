@@ -15,7 +15,8 @@ const App = props => (
     <div>
       <PlayerList players={props.players}
                   selectedId={props.selectedId}
-                  selectPlayer={props.actions.selectPlayer}/>
+                  selectPlayer={props.actions.selectPlayer}
+                  dragPlayer={props.actions.dragPlayer}/>
     </div>
 
     <SelectPlayer selectedName={props.selectedName}
