@@ -49,6 +49,7 @@ function sourceCollect(connect, monitor) {
     isDragging: monitor.isDragging()
   };
 }
+
 const cardTarget = {
   hover(props, monitor, component) {
     const dragIndex = monitor.getItem().index;
@@ -68,8 +69,6 @@ const cardTarget = {
     // Get pixels to the top
     const hoverClientY = clientOffset.y - hoverBoundingRect.top;
 
-    console.log(hoverClientY, hoverBoundingRect);
-
     // Dragging downwards
     if (dragIndex < hoverIndex && hoverClientY < 0) {
       return;
@@ -88,17 +87,17 @@ const cardTarget = {
     // but it's good here for the sake of performance
     // to avoid expensive index searches.
     monitor.getItem().index = hoverIndex;
-  },
-  //drop(props) {
-  //  return {
-  //    target: props.player.get('_id'),
-  //    index: props.index
-  //  };
-  //}
+  }
 };
 function targetCollect(connect, monitor) {
   return {
     connectDropTarget: connect.dropTarget()
   };
 }
-export default DropTarget('PLAYER', cardTarget, targetCollect)(DragSource('PLAYER', cardSource, sourceCollect)(DraggablePlayerItem));
+
+export default
+  DropTarget('PLAYER', cardTarget, targetCollect)(
+    DragSource('PLAYER', cardSource, sourceCollect)(
+      DraggablePlayerItem
+    )
+  );

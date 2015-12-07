@@ -9,32 +9,10 @@ export default {
       Meteor.call('incrementScore', playerId, increment);
       return players;
     },
-    'UPDATE_PLAYERS': () => {
-      return Immutable.fromJS(Players.find({}, {sort: {index: 1}}).fetch());
-      //return Immutable.fromJS(Players.find({}, {sort: {score: -1}}).fetch());
-    },
-    'DRAG_PLAYER': (players, {payload: {playerId, newIndex}}) => {
-      const [prevIndex, player] = players.findEntry(player => player.get('_id') === playerId);
-      return players
-        // Remove the player from its previous index.
-        .delete(prevIndex)
-        // Insert it at the new index.
-        .splice(newIndex, 0, player)
-        // Recompute indexes.
-        .map((player, index) => player.set('index', index));
-    },
-    'DROP_PLAYER': (players) => {
-      // Call 'updateIndexes' with the array of {_id, index} pairs.
-      let data = [];
-      players.forEach(player => {
-        data.push({_id: player.get('_id'), index: player.get('index')});
-      });
-      Meteor.call('updateIndexes', data);
-      return players;
-    }
   }),
-  userInterface: createReducer(Immutable.fromJS({selectedId: '', sort: 'index'}), {
+  userInterface: createReducer(Immutable.fromJS({selectedId: '', sort: {field: 'index', order: 1}}), {
     'SELECT_PLAYER': (userInterface, {payload: playerId}) => userInterface.set('selectedId', playerId),
-    'SET_SORTING': (userInterface, {payload: sort}) => userInterface.set('sort', sort)
+    'SET_SORTING': (userInterface, {payload: {field, order}}) =>
+      userInterface.setIn(['sort', 'field'], field).setIn(['sort', 'order'], order)
   })
 }

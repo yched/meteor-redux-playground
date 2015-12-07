@@ -8,6 +8,8 @@ import logger from './middlewares/logger';
 
 let debugToolEnabled = 0;
 
+const reducer = combineReducers(reducers);
+
 const debugCreateStore = debugToolEnabled ? devTools()(
   persistState(window.location.href.match(/[?&]debug_session=([^&]+)\b/))(
     createStore
@@ -15,7 +17,5 @@ const debugCreateStore = debugToolEnabled ? devTools()(
 ) : createStore;
 const finalCreateStore = applyMiddleware(logger)(debugCreateStore);
 
-let rootReducer = combineReducers(reducers);
-const state = Immutable.fromJS({});
 
-export default finalCreateStore(rootReducer, rootReducer(state));
+export default finalCreateStore(reducer);

@@ -13,17 +13,18 @@ const App = props => (
     <div className="subtitle">Select a scientist to give them points</div>
 
 
-    <input type="radio" name="sorting" value="index" defaultChecked={props.sort === 'index'} onClick={() => props.actions.setSorting('index')} />
+    <input type="radio" name="sorting" value="index" defaultChecked={props.sort.get('field') === 'index'} onClick={() => props.actions.setSorting('index', 1)} />
     Manual sort
-    <input type="radio" name="sorting" value="score" defaultChecked={props.sort === 'score'} onClick={() => props.actions.setSorting('score')} />
+    <input type="radio" name="sorting" value="score" defaultChecked={props.sort.get('field') === 'score'} onClick={() => props.actions.setSorting('score', -1)} />
     Sort by scores
 
     <div>
       <PlayerList players={props.players}
                   selectedId={props.selectedId}
+                  sort={props.sort}
                   selectPlayer={props.actions.selectPlayer}
-                  dragPlayer={props.actions.dragPlayer}
-                  dropPlayer={props.actions.dropPlayer} />
+                  dragPlayer={props.dragPlayer}
+                  dropPlayer={props.dropPlayer} />
     </div>
 
     <SelectPlayer selectedName={props.selectedName}

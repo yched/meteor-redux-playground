@@ -10,15 +10,23 @@ const PlayerList = (props) => (
       props.players.map((player, index) => {
         const playerId = player.get('_id');
         return (
-          <DraggablePlayerItem
-            index={index}
-            key={ playerId }
-            player={ player }
-            selected={ props.selectedId == playerId }
-            selectPlayer={ props.selectPlayer }
-            dragPlayer={ props.dragPlayer }
-            dropPlayer={ props.dropPlayer }
-          />
+          props.sort.get('field') === 'index' ?
+            <DraggablePlayerItem
+              key={ playerId }
+              player={ player }
+              selected={ props.selectedId == playerId }
+              selectPlayer={ props.selectPlayer }
+              index={index}
+              dragPlayer={ props.dragPlayer }
+              dropPlayer={ props.dropPlayer }
+            />
+          :
+            <PlayerItem
+              key={ playerId }
+              player={ player }
+              selected={ props.selectedId == playerId }
+              selectPlayer={ props.selectPlayer }
+            />
         );
       })
     }
