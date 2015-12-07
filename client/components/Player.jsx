@@ -12,7 +12,7 @@ let PlayerItem = ({player, selected, selectPlayer}) => (
 );
 
 PlayerItem = compose(
-  //visualizeRender,
+  visualizeRender,
   pure,
   setPropTypes({
     player: map.isRequired,

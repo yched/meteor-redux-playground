@@ -32,25 +32,24 @@ const PlayerList = React.createClass({
     this.state.dragPlayers.forEach(player => {
       data.push({_id: player.get('_id'), index: player.get('index')});
     });
-    Meteor.call('updateIndexes', data);
-    this.setState({dragPlayers: null});
+    Meteor.call('updateIndexes', data, () => {this.setState({dragPlayers: null})});
   },
 
   render() {
     let props = this.props;
-    let players = this.state.dragPlayers || props.players;
+    let players = this.state.dragPlayers || this.props.players;
     return (
       <ul className="leaderboard">
         {
           players.map((player, index) => {
             const playerId = player.get('_id');
             return (
-              props.sort.get('field') === 'index' ?
+              this.props.sort.get('field') === 'index' ?
               <DraggablePlayerItem
                 key={ playerId }
                 player={ player }
-                selected={ props.selectedId == playerId }
-                selectPlayer={ props.selectPlayer }
+                selected={ this.props.selectedId == playerId }
+                selectPlayer={ this.props.selectPlayer }
                 index={index}
                 dragPlayer={ this.dragPlayer }
                 dropPlayer={ this.dropPlayer }
@@ -59,8 +58,8 @@ const PlayerList = React.createClass({
               <PlayerItem
                 key={ playerId }
                 player={ player }
-                selected={ props.selectedId == playerId }
-                selectPlayer={ props.selectPlayer }
+                selected={ this.props.selectedId == playerId }
+                selectPlayer={ this.props.selectPlayer }
               />
               );
             })
