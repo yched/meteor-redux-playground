@@ -26,24 +26,8 @@ let AppContainer = React.createClass({
     };
   },
 
-  dragPlayer(playerId, newIndex) {
-    const [prevIndex, player] = this.data.players.findEntry(player => player.get('_id') === playerId);
-    this.data.players = this.data.players
-      // Remove the player from its previous index.
-      .delete(prevIndex)
-      // Insert it at the new index.
-      .splice(newIndex, 0, player)
-      // Recompute indexes.
-      .map((player, index) => player.set('index', index));
-  },
-
-  dropPlayer() {
-    // Call 'updateIndexes' with the array of {_id, index} pairs.
-    let data = [];
-    this.data.players.forEach(player => {
-      data.push({_id: player.get('_id'), index: player.get('index')});
-    });
-    Meteor.call('updateIndexes', data);
+  incrementPlayerScore(playerId, increment) {
+    Meteor.call('incrementScore', playerId, increment);
   },
 
   render() {
@@ -51,8 +35,8 @@ let AppContainer = React.createClass({
       <App {...this.props}
         players={this.data.players}
         selectedName={this.data.selectedName}
-        dragPlayer={this.dragPlayer}
-        dropPlayer={this.dropPlayer} />
+        incrementPlayerScore={this.incrementPlayerScore}
+      />
     );
   }
 });

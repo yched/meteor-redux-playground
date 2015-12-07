@@ -59,21 +59,16 @@ const cardTarget = {
     if (dragIndex === hoverIndex) {
       return;
     }
-
     // Determine rectangle on screen
     const hoverBoundingRect = findDOMNode(component).getBoundingClientRect();
-
     // Determine mouse position
     const clientOffset = monitor.getClientOffset();
-
     // Get pixels to the top
     const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-
     // Dragging downwards
     if (dragIndex < hoverIndex && hoverClientY < 0) {
       return;
     }
-
     // Dragging upwards
     if (dragIndex > hoverIndex && hoverClientY > hoverBoundingRect.bottom) {
       return;

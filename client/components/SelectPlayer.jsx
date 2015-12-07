@@ -7,7 +7,7 @@ let SelectPlayer = props => {
     return (
       <div className="details">
         <div className="name">{props.selectedName}</div>
-        <button className="inc" onClick={ () => props.incrementScore(props.selectedId, props.incrementLevel) }>
+        <button className="inc" onClick={ () => props.incrementPlayerScore(props.selectedId, props.incrementLevel) }>
           Add {props.incrementLevel} points
         </button>
       </div>
@@ -26,7 +26,7 @@ SelectPlayer = compose(
   setPropTypes({
     selectedName: React.PropTypes.string,
     selectedId: React.PropTypes.string,
-    incrementScore: React.PropTypes.func.isRequired,
+    incrementPlayerScore: React.PropTypes.func.isRequired,
     incrementLevel: React.PropTypes.number
   }),
   defaultProps({

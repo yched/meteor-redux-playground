@@ -13,9 +13,9 @@ const App = props => (
     <div className="subtitle">Select a scientist to give them points</div>
 
 
-    <input type="radio" name="sorting" value="index" defaultChecked={props.sort.get('field') === 'index'} onClick={() => props.actions.setSorting('index', 1)} />
+    <input type="radio" name="sorting" defaultChecked={props.sort.get('field') === 'index'} onClick={() => props.actions.setSorting('index', 1)} />
     Manual sort
-    <input type="radio" name="sorting" value="score" defaultChecked={props.sort.get('field') === 'score'} onClick={() => props.actions.setSorting('score', -1)} />
+    <input type="radio" name="sorting" defaultChecked={props.sort.get('field') === 'score'} onClick={() => props.actions.setSorting('score', -1)} />
     Sort by scores
 
     <div>
@@ -28,8 +28,8 @@ const App = props => (
     </div>
 
     <SelectPlayer selectedName={props.selectedName}
-                  selectedId = {props.selectedId}
-                  incrementScore={props.actions.incrementScore} />
+                  selectedId={props.selectedId}
+                  incrementPlayerScore={props.incrementPlayerScore} />
 
   </div>
 );
@@ -43,7 +43,7 @@ export default DragDropContext(HTML5Backend)(compose(
 
     actions: React.PropTypes.shape({
       selectPlayer: React.PropTypes.func.isRequired,
-      incrementScore: React.PropTypes.func.isRequired,
+      setSorting: React.PropTypes.func.isRequired,
     }).isRequired
   })
 )(App));
