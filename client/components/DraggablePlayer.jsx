@@ -28,18 +28,14 @@ const cardSource = {
     return {
       playerId: props.player.get('_id'),
       index: props.player.get('index'),
-      originalIndex: props.player.get('index'),
     };
   },
   endDrag(props, monitor) {
     if (monitor.didDrop()) {
-      props.dropPlayer();
+      props.dropCallback();
     }
     else {
-      // Put the item back in its original position.
-      // @todo not good enough for concurrent edits...
-      const {playerId, originalIndex} = monitor.getItem();
-      props.dragPlayer(playerId, originalIndex);
+      props.endDragCallback();
     }
   }
 };
@@ -75,7 +71,7 @@ const cardTarget = {
     }
 
     // Time to actually perform the action
-    props.dragPlayer(monitor.getItem().playerId, hoverIndex);
+    props.dragCallback(monitor.getItem().playerId, hoverIndex);
 
     // Note: we're mutating the monitor item here!
     // Generally it's better to avoid mutations,

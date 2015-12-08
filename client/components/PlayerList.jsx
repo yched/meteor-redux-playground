@@ -12,58 +12,68 @@ const PlayerList = React.createClass({
     }
   },
 
-  dragPlayer(playerId, newIndex) {
-    let dragPlayers = this.state.dragPlayers || this.props.players;
-    const [prevIndex, player] = dragPlayers.findEntry(player => player.get('_id') === playerId);
+  dragCallback(playerId, newIndex) {
     this.setState({
-      dragPlayers: dragPlayers
-      // Remove the player from its previous index.
-        .delete(prevIndex)
-        // Insert it at the new index.
-        .splice(newIndex, 0, player)
-        // Recompute indexes.
-        .map((player, index) => player.set('index', index))
+      dragState: {playerId, newIndex}
     });
   },
 
-  dropPlayer() {
-    // Call 'updateIndexes' with the array of {_id, index} pairs.
+  dropCallback() {
+    // Call 'updateIndexes' Meteor method with the array of {_id, index} pairs.
     let data = [];
-    this.state.dragPlayers.forEach(player => {
+    this.getReorderedPlayers().forEach(player => {
       data.push({_id: player.get('_id'), index: player.get('index')});
     });
-    Meteor.call('updateIndexes', data, () => {this.setState({dragPlayers: null})});
+    Meteor.call('updateIndexes', data, () => this.endDragCallback());
+  },
+
+  endDragCallback() {
+    this.setState({dragState: null});
+  },
+
+  getReorderedPlayers() {
+    let players = this.props.players;
+    // If dragging, reorder the list for the current drag state.
+    if (this.state.dragState) {
+      // Remove the player from its previous index.
+      const [prevIndex, player] = players.findEntry(player => player.get('_id') === this.state.dragState.playerId);
+      players = players.delete(prevIndex)
+        // Insert it at the new index.
+        .splice(this.state.dragState.newIndex, 0, player)
+        // Recompute indexes.
+        .map((player, index) => player.set('index', index));
+    }
+    return players;
   },
 
   render() {
-    let props = this.props;
-    let players = this.state.dragPlayers || this.props.players;
     return (
       <ul className="leaderboard">
         {
-          players.map((player, index) => {
-            const playerId = player.get('_id');
-            return (
-              this.props.sort.get('field') === 'index' ?
+          this.getReorderedPlayers().map((player, index) => {
+          const playerId = player.get('_id');
+          return (
+            this.props.sort.get('field') === 'index' ?
               <DraggablePlayerItem
                 key={ playerId }
                 player={ player }
                 selected={ this.props.selectedId == playerId }
                 selectPlayer={ this.props.selectPlayer }
                 index={index}
-                dragPlayer={ this.dragPlayer }
-                dropPlayer={ this.dropPlayer }
+                dragCallback={ this.dragCallback }
+                dropCallback={ this.dropCallback }
+                endDragCallback={ this.endDragCallback }
               />
-                :
+            :
               <PlayerItem
                 key={ playerId }
                 player={ player }
                 selected={ this.props.selectedId == playerId }
                 selectPlayer={ this.props.selectPlayer }
               />
-              );
-            })
-          }
+            );
+          })
+        }
       </ul>
     );
   }
