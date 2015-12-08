@@ -1,39 +1,43 @@
 import React from 'react';
-import { compose, pure, setPropTypes } from 'recompose';
+import { pure, setPropTypes } from 'recompose';
 import { listOf, map } from 'react-immutable-proptypes';
 import PlayerItem from './Player';
 import DraggablePlayerItem from './DraggablePlayer';
 
+@pure
+@setPropTypes({
+  players: listOf(map).isRequired,
+  selectedId: React.PropTypes.string.isRequired,
+  selectPlayer: React.PropTypes.func.isRequired
+})
+class PlayerList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {dragPlayers: null};
+  }
 
-const PlayerList = React.createClass({
-  getInitialState() {
-    return {
-      dragPlayers: null
-    }
-  },
-
-  dragCallback(playerId, newIndex) {
+  dragCallback = (playerId, newIndex) => {
     // Store the dragging state.
     // Note : ça pourrait aussi aller dans le store...
     this.setState({
       dragState: {playerId, newIndex}
     });
-  },
+  }
 
-  dropCallback() {
+  dropCallback = () => {
     // Call 'updateIndexes' Meteor method with the array of {_id, index} pairs.
     let data = [];
     this.getReorderedPlayers().forEach(player => {
       data.push({_id: player.get('_id'), index: player.get('index')});
     });
     Meteor.call('updateIndexes', data, () => this.endDragCallback());
-  },
+  }
 
-  endDragCallback() {
+  endDragCallback = () => {
     this.setState({dragState: null});
-  },
+  }
 
-  getReorderedPlayers() {
+  getReorderedPlayers = () => {
     let players = this.props.players;
     // If dragging, reorder the list according to the current drag state.
     if (this.state.dragState) {
@@ -46,7 +50,7 @@ const PlayerList = React.createClass({
         .map((player, index) => player.set('index', index));
     }
     return players;
-  },
+  }
 
   render() {
     return (
@@ -79,14 +83,7 @@ const PlayerList = React.createClass({
       </ul>
     );
   }
-});
+};
 
-export default compose(
-  pure,
-  setPropTypes({
-    players: listOf(map).isRequired,
-    selectedId: React.PropTypes.string.isRequired,
-    selectPlayer: React.PropTypes.func.isRequired
-  })
-)(PlayerList);
+export default PlayerList;
 

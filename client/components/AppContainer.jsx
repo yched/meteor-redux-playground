@@ -8,7 +8,6 @@ import actions from '../store/actions'
 import {Players} from '../../both/models/player';
 import App from './app';
 
-//@visualizeRender
 let AppContainer = React.createClass({
   mixins: [ReactMeteorData],
 
