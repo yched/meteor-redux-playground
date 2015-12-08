@@ -13,6 +13,8 @@ const PlayerList = React.createClass({
   },
 
   dragCallback(playerId, newIndex) {
+    // Store the dragging state.
+    // Note : ça pourrait aussi aller dans le store...
     this.setState({
       dragState: {playerId, newIndex}
     });
@@ -33,9 +35,9 @@ const PlayerList = React.createClass({
 
   getReorderedPlayers() {
     let players = this.props.players;
-    // If dragging, reorder the list for the current drag state.
+    // If dragging, reorder the list according to the current drag state.
     if (this.state.dragState) {
-      // Remove the player from its previous index.
+      // Remove the player from its previous position.
       const [prevIndex, player] = players.findEntry(player => player.get('_id') === this.state.dragState.playerId);
       players = players.delete(prevIndex)
         // Insert it at the new index.
