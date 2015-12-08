@@ -5,7 +5,7 @@ Meteor.methods({
     Players.update(playerId, {$inc: {score: increment}});
   },
   updateIndexes(data) {
-    if (Meteor.isServer) Meteor._sleepForMs(3000);
+    //if (Meteor.isServer) Meteor._sleepForMs(3000);
     data.forEach( ({_id, index}) => {
       Players.update(_id, {$set: {index}});
     });
