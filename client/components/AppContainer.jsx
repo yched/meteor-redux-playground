@@ -11,16 +11,23 @@ import App from './app';
 let AppContainer = React.createClass({
   mixins: [ReactMeteorData],
 
+  // @todo Tourne à chaque changement des props ???
   getMeteorData() {
     Meteor.subscribe('players', this.props.sort.get('field'), this.props.sort.get('order'));
     let sort = {};
     sort[this.props.sort.get('field')] = this.props.sort.get('order');
     let players = Players.find({}, {sort}).fetch();
 
+    // Pour optimiser les immutables, on fait un mergeDeep sur l'état précédent,
+    // ce qui garantit que les "players" non modifiés restent identiques.
+    let immutablePlayers = this.data.players ?
+      this.data.players.mergeDeep(players).slice(0, players.length) :
+      Immutable.fromJS(players);
+
     let selectedPlayer = Players.findOne(this.props.selectedId);
 
     return {
-      players: Immutable.fromJS(players),
+      players: immutablePlayers,
       selectedName: selectedPlayer ? selectedPlayer.name : '',
     };
   },
