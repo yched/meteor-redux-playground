@@ -27,7 +27,7 @@ const cardSource = {
   beginDrag(props) {
     return {
       playerId: props.player.get('_id'),
-      index: props.player.get('index'),
+      index: props.index,
     };
   },
   endDrag(props, monitor) {

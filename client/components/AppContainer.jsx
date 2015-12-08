@@ -16,10 +16,12 @@ let AppContainer = React.createClass({
     Meteor.subscribe('players', this.props.sort.get('field'), this.props.sort.get('order'));
     let sort = {};
     sort[this.props.sort.get('field')] = this.props.sort.get('order');
-    let players = Players.find({}, {sort}).fetch();
+    let players = Players.find({}, {sort, fields: {index: 0}}).fetch();
 
     // Pour optimiser les immutables, on fait un mergeDeep sur l'état précédent,
     // ce qui garantit que les "players" non modifiés restent identiques.
+    // @todo En recevant une update de Meteor suite à drag-drop d'un autre utilisateur, on repeint quand même
+    // toute la tranche entre "ancienne position" et "nouvelle position" du bloc, c'est pas optimal.
     let immutablePlayers = this.data.players ?
       this.data.players.mergeDeep(players).slice(0, players.length) :
       Immutable.fromJS(players);

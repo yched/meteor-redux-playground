@@ -27,8 +27,8 @@ class PlayerList extends React.Component {
   dropCallback = () => {
     // Call 'updateIndexes' Meteor method with the array of {_id, index} pairs.
     let data = [];
-    this.getReorderedPlayers().forEach(player => {
-      data.push({_id: player.get('_id'), index: player.get('index')});
+    this.getReorderedPlayers().forEach((player, index) => {
+      data.push({_id: player.get('_id'), index});
     });
     Meteor.call('updateIndexes', data, () => this.endDragCallback());
   }
@@ -41,13 +41,9 @@ class PlayerList extends React.Component {
     let players = this.props.players;
     // If dragging, reorder the list according to the current drag state.
     if (this.state.dragState) {
-      // Remove the player from its previous position.
       const [prevIndex, player] = players.findEntry(player => player.get('_id') === this.state.dragState.playerId);
-      players = players.delete(prevIndex)
-        // Insert it at the new index.
-        .splice(this.state.dragState.newIndex, 0, player)
-        // Recompute indexes.
-        .map((player, index) => player.set('index', index));
+      // Remove the player from its previous position, and insert it at the new index.
+      players = players.delete(prevIndex).splice(this.state.dragState.newIndex, 0, player)
     }
     return players;
   }
