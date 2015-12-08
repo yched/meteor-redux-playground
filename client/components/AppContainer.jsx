@@ -14,24 +14,37 @@ let AppContainer = React.createClass({
   // @todo Tourne à chaque changement des props ???
   getMeteorData() {
     Meteor.subscribe('players', this.props.sort.get('field'), this.props.sort.get('order'));
-    let sort = {};
+
+    // Fetch the new players from Mini-Mongo.
+    // Apply the right sort.
+    const sort = {};
     sort[this.props.sort.get('field')] = this.props.sort.get('order');
-    let players = Players.find({}, {sort, fields: {index: 0}}).fetch();
-
-    // Pour optimiser les immutables, on fait un mergeDeep sur l'état précédent,
-    // ce qui garantit que les "players" non modifiés restent identiques.
-    // @todo En recevant une update de Meteor suite à drag-drop d'un autre utilisateur, on repeint quand même
-    // toute la tranche entre "ancienne position" et "nouvelle position" du bloc, c'est pas optimal.
-    let immutablePlayers = this.data.players ?
-      this.data.players.mergeDeep(players).slice(0, players.length) :
-      Immutable.fromJS(players);
-
-    let selectedPlayer = Players.findOne(this.props.selectedId);
+    // Do not grab the indexes, so that the immutables do not change needlessly.
+    const fields = {index: 0}
+    // Key players by id for easier tracking.
+    const players = _.indexBy(Players.find({}, {sort, fields}).fetch(), '_id');
 
     return {
-      players: immutablePlayers,
-      selectedName: selectedPlayer ? selectedPlayer.name : '',
+      players: this._immutablePlayers(players),
+      selectedName: _.has(players, this.props.selectedId) ? players[this.props.selectedId].name : '',
     };
+  },
+
+  // Do our best to keep the existing players immutables unchanged.
+  _immutablePlayers(players) {
+    // On startup, create a fresh immutable.
+    if (!this.data.players) {
+      return Immutable.fromJS(players)
+    }
+    const ids = _.keys(players);
+    // @todo use withMutations to reduce the instanciations ?
+    return this.data.players
+      // Remove players that are not in the new list
+      .filter((player, id) => _.has(players, id))
+      // Apply the same order than the new list
+      .sortBy((player, id) => _.indexOf(ids, id))
+      // Deep-merge the new data
+      .mergeDeep(players)
   },
 
   incrementPlayerScore(playerId, increment) {

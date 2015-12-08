@@ -6,9 +6,11 @@ import { DragSource, DropTarget } from 'react-dnd';
 import PlayerItem from './Player';
 
 let DraggablePlayerItem = (props) => {
+  // Do not pass the index down to the Item, do avoid unneeded repaints.
+  const {index, ...itemProps} = props;
   return props.connectDropTarget(props.connectDragSource(
     <div style={{ opacity: props.isDragging ? 0.5 : 1 }} className={'draggable-player' + (props.isDragging ? ' dragging' : '')}>
-      <PlayerItem {...props} />
+      <PlayerItem {...itemProps} />
     </div>
   ));
 };

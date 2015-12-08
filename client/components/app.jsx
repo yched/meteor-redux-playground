@@ -1,6 +1,6 @@
 import React from 'react';
 import { compose, pure, setPropTypes } from 'recompose';
-import { listOf, map } from 'react-immutable-proptypes';
+import { mapOf, map } from 'react-immutable-proptypes';
 import PlayerList from './PlayerList';
 import SelectPlayer from './SelectPlayer';
 import { DragDropContext } from 'react-dnd';
@@ -37,7 +37,7 @@ const App = props => (
 export default DragDropContext(HTML5Backend)(compose(
   pure,
   setPropTypes({
-    players: listOf(map).isRequired,
+    players: mapOf(map).isRequired,
     selectedId: React.PropTypes.string.isRequired,
     selectedName: React.PropTypes.string.isRequired,
 

@@ -3,10 +3,10 @@ import { visualizeRender } from '../react_helpers';
 import { compose, pure, setPropTypes } from 'recompose';
 import { map } from 'react-immutable-proptypes';
 
-let PlayerItem = ({player, selected, selectPlayer, index}) => (
+let PlayerItem = ({player, selected, selectPlayer}) => (
   <li className={ 'player' + (selected ? ' selected' : '') }
       onClick={ () => selectPlayer(player.get('_id')) }>
-    <span className="name">({ index }) { player.get('name') }</span>
+    <span className="name">{ player.get('name') }</span>
     <span className="score">{ player.get('score') }</span>
   </li>
 );

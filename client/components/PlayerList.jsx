@@ -1,12 +1,12 @@
 import React from 'react';
 import { pure, setPropTypes } from 'recompose';
-import { listOf, map } from 'react-immutable-proptypes';
+import { mapOf, map } from 'react-immutable-proptypes';
 import PlayerItem from './Player';
 import DraggablePlayerItem from './DraggablePlayer';
 
 @pure
 @setPropTypes({
-  players: listOf(map).isRequired,
+  players: mapOf(map).isRequired,
   selectedId: React.PropTypes.string.isRequired,
   selectPlayer: React.PropTypes.func.isRequired
 })
@@ -38,12 +38,15 @@ class PlayerList extends React.Component {
   }
 
   getReorderedPlayers = () => {
-    let players = this.props.players;
+    // Convert the map to a list.
+    let players = this.props.players.toList();
     // If dragging, reorder the list according to the current drag state.
     if (this.state.dragState) {
       const [prevIndex, player] = players.findEntry(player => player.get('_id') === this.state.dragState.playerId);
       // Remove the player from its previous position, and insert it at the new index.
-      players = players.delete(prevIndex).splice(this.state.dragState.newIndex, 0, player)
+      players = players.delete(prevIndex).splice(this.state.dragState.newIndex, 0, player);
+      // @todo use withMutations to reduce the instanciations ?
+      //players = players.withMutations(list => {list.delete(prevIndex).splice(this.state.dragState.newIndex, 0, player)});
     }
     return players;
   }
