@@ -17,8 +17,7 @@ let AppContainer = React.createClass({
 
     // Fetch the new players from Mini-Mongo.
     // Apply the right sort.
-    const sort = {};
-    sort[this.props.sort.get('field')] = this.props.sort.get('order');
+    const sort = {[this.props.sort.get('field')]: this.props.sort.get('order')};
     // Do not grab the indexes, so that the immutables do not change needlessly.
     const fields = {index: 0}
     // Key players by id for easier tracking.
