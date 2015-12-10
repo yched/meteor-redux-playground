@@ -4,6 +4,7 @@ import store from './store/store';
 import { Provider } from 'react-redux';
 import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
 import AppContainer from './components/AppContainer';
+import * as settings from '../settings.jsx';
 
 import '../both/models/player';
 import '../both/models/methods';
@@ -14,7 +15,7 @@ Meteor.startup(function() {
       <Provider store={store}>
         <AppContainer />
       </Provider>
-      { false ?
+      { settings.debug ?
         <DebugPanel top right bottom>
           <DevTools store={store} monitor={LogMonitor} />
         </DebugPanel>
