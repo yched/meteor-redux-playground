@@ -25,7 +25,7 @@ let AppContainer = React.createClass({
 
     return {
       players: this._immutablePlayers(players),
-      selectedName: _.has(players, this.props.selectedId) ? players[this.props.selectedId].name : '',
+      selectedName: players.hasOwnProperty(this.props.selectedId) ? players[this.props.selectedId].name : '',
     };
   },
 
@@ -35,13 +35,13 @@ let AppContainer = React.createClass({
     if (!this.data.players) {
       return Immutable.fromJS(players)
     }
-    const ids = _.keys(players);
+    const ids = Object.keys(players);
     // @todo use withMutations to reduce the instanciations ?
     return this.data.players
       // Remove players that are not in the new list
-      .filter((player, id) => _.has(players, id))
+      .filter((player, id) => players.hasOwnProperty(id))
       // Apply the same order than the new list
-      .sortBy((player, id) => _.indexOf(ids, id))
+      .sortBy((player, id) => ids.indexOf(id))
       // Deep-merge the new data
       .mergeDeep(players)
   },
