@@ -1,6 +1,7 @@
 import React from 'react';
 import { compose, pure, setPropTypes } from 'recompose';
-import { mapOf, map } from 'react-immutable-proptypes';
+import { mapOf } from 'react-immutable-proptypes';
+import { playerPropType } from './immutable_models/player';
 import PlayerList from './PlayerList';
 import SelectPlayer from './SelectPlayer';
 import { DragDropContext } from 'react-dnd';
@@ -11,7 +12,6 @@ const App = props => (
     <div className="logo"></div>
     <h1 className="title">Leaderboard</h1>
     <div className="subtitle">Select a scientist to give them points</div>
-
 
     <input type="radio" name="sorting" defaultChecked={props.sort.get('field') === 'index'} onClick={() => props.actions.setSorting('index', 1)} />
     Manual sort
@@ -27,8 +27,7 @@ const App = props => (
                   dropPlayer={props.dropPlayer} />
     </div>
 
-    <SelectPlayer selectedName={props.selectedName}
-                  selectedId={props.selectedId}
+    <SelectPlayer selectedPlayer={props.selectedPlayer}
                   incrementPlayerScore={props.incrementPlayerScore} />
 
   </div>
@@ -37,9 +36,9 @@ const App = props => (
 export default DragDropContext(HTML5Backend)(compose(
   pure,
   setPropTypes({
-    players: mapOf(map).isRequired,
+    players: mapOf(playerPropType).isRequired,
     selectedId: React.PropTypes.string.isRequired,
-    selectedName: React.PropTypes.string.isRequired,
+    selectedPlayer: playerPropType,
 
     actions: React.PropTypes.shape({
       selectPlayer: React.PropTypes.func.isRequired,

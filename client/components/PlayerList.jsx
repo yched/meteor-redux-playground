@@ -1,12 +1,13 @@
 import React from 'react';
 import { pure, setPropTypes } from 'recompose';
-import { mapOf, map } from 'react-immutable-proptypes';
+import { mapOf } from 'react-immutable-proptypes';
+import { playerPropType } from './immutable_models/player';
 import PlayerItem from './Player';
 import DraggablePlayerItem from './DraggablePlayer';
 
 @pure
 @setPropTypes({
-  players: mapOf(map).isRequired,
+  players: mapOf(playerPropType).isRequired,
   selectedId: React.PropTypes.string.isRequired,
   selectPlayer: React.PropTypes.func.isRequired
 })
@@ -28,7 +29,7 @@ class PlayerList extends React.Component {
     // Call 'updateIndexes' Meteor method with the array of {_id, index} pairs.
     let data = [];
     this.getReorderedPlayers().forEach((player, index) => {
-      data.push({_id: player.get('_id'), index});
+      data.push({_id: player._id, index});
     });
     Meteor.call('updateIndexes', data, () => this.endDragCallback());
   }
@@ -42,7 +43,7 @@ class PlayerList extends React.Component {
     let players = this.props.players.toList();
     // If dragging, reorder the list according to the current drag state.
     if (this.state.dragState) {
-      const [prevIndex, player] = players.findEntry(player => player.get('_id') === this.state.dragState.playerId);
+      const [prevIndex, player] = players.findEntry(player => player._id === this.state.dragState.playerId);
       // Remove the player from its previous position, and insert it at the new index.
       players = players.delete(prevIndex).splice(this.state.dragState.newIndex, 0, player);
       // @todo use withMutations to reduce the instanciations ?
@@ -56,7 +57,7 @@ class PlayerList extends React.Component {
       <ul className="leaderboard">
         {
           this.getReorderedPlayers().map((player, index) => {
-          const playerId = player.get('_id');
+          const playerId = player._id;
           return (
             this.props.sort.get('field') === 'index' ?
               <DraggablePlayerItem

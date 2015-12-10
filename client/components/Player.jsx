@@ -1,13 +1,13 @@
 import React from 'react';
 import { visualizeRender } from '../react_helpers';
 import { compose, pure, setPropTypes } from 'recompose';
-import { map } from 'react-immutable-proptypes';
+import { playerPropType } from './immutable_models/player';
 
 let PlayerItem = ({player, selected, selectPlayer}) => (
   <li className={ 'player' + (selected ? ' selected' : '') }
-      onClick={ () => selectPlayer(player.get('_id')) }>
-    <span className="name">{ player.get('name') }</span>
-    <span className="score">{ player.get('score') }</span>
+      onClick={ () => selectPlayer(player._id) }>
+    <span className="name">{ player.name }</span>
+    <span className="score">{ player.score }</span>
   </li>
 );
 
@@ -15,7 +15,7 @@ PlayerItem = compose(
   visualizeRender,
   pure,
   setPropTypes({
-    player: map.isRequired,
+    player: playerPropType.isRequired,
     selected: React.PropTypes.bool,
     selectPlayer: React.PropTypes.func.isRequired
   })
