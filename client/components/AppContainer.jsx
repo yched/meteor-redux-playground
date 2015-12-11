@@ -34,21 +34,18 @@ let AppContainer = React.createClass({
 
   // Do our best to keep the existing players immutables unchanged.
   _immutablePlayers(players) {
-    // On startup, create a fresh immutable.
-    const immutablePlayers = Immutable.fromJS(players, (key, value) => key ? new PlayerRecord(value) : value.toMap());
-    if (!this.data.players) {
-      return immutablePlayers;
-    }
-    // Otherwise, merge with the new elements.
-    const ids = Object.keys(players);
-    // @todo use withMutations to reduce the instanciations ?
-    return this.data.players
-      // Remove players that are not in the new list
-      .filter((player, id) => players.hasOwnProperty(id))
-      // Apply the same order than the new list
-      .sortBy((player, id) => ids.indexOf(id))
-      // Deep-merge the new data
-      .mergeDeep(immutablePlayers)
+    const prev = this.data.players;
+    return Immutable.fromJS(players, (key, value) => {
+      // The function is called one last time for the whole list, with key = ''.
+      if (!key) {
+        return value.toMap();
+      }
+      // Keep the previous immutable if there is one and the data is unchanged,
+      // else create a new record.
+      return (prev && prev.has(key) && Immutable.is(value, prev.get(key))) ?
+        prev.get(key) :
+        new PlayerRecord(value);
+    });
   },
 
   incrementPlayerScore(playerId, increment) {
