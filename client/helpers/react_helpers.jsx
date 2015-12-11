@@ -1,4 +1,4 @@
-import createHelper from '../node_modules/recompose/createHelper';
+import createHelper from '../../node_modules/recompose/createHelper';
 import visualizeRender from 'react-render-visualizer-decorator';
 
 export default {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { visualizeRender } from '../react_helpers';
+import { visualizeRender } from '../helpers/react_helpers';
 import { compose, pure, setPropTypes } from 'recompose';
 import { playerPropType } from './immutable_models/player';
 
