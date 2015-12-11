@@ -20,11 +20,9 @@ const App = props => (
 
     <div>
       <PlayerList players={props.players}
-                  selectedId={props.selectedId}
+                  selectedPlayer={props.selectedPlayer}
                   playerView={props.playerView}
-                  selectPlayer={props.actions.selectPlayer}
-                  dragPlayer={props.dragPlayer}
-                  dropPlayer={props.dropPlayer} />
+                  selectPlayer={props.actions.selectPlayer} />
     </div>
 
     <SelectPlayer selectedPlayer={props.selectedPlayer}
@@ -33,7 +31,8 @@ const App = props => (
   </div>
 );
 
-export default DragDropContext(HTML5Backend)(compose(
+export default compose(
+  DragDropContext(HTML5Backend),
   pure,
   setPropTypes({
     players: mapOf(playerPropType).isRequired,
@@ -46,5 +45,5 @@ export default DragDropContext(HTML5Backend)(compose(
       setPlayerView: React.PropTypes.func.isRequired,
     }).isRequired
   })
-)(App));
+)(App);
 

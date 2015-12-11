@@ -6,7 +6,8 @@ import { DragSource, DropTarget } from 'react-dnd';
 import PlayerItem from './Player';
 
 let DraggablePlayerItem = (props) => {
-  // Do not pass the index down to the Item, do avoid unneeded repaints.
+  // Cheat : do not pass the index down to the Item, do avoid unneeded repaints.
+  // In typical cases, though, the item will have to display its index...
   const {index, ...itemProps} = props;
   return props.connectDropTarget(props.connectDragSource(
     <div style={{ opacity: props.isDragging ? 0.5 : 1 }} className={'draggable-player' + (props.isDragging ? ' dragging' : '')}>
@@ -19,12 +20,17 @@ DraggablePlayerItem = compose(
   pure,
   setPropTypes({
     player: playerPropType.isRequired,
-    selected: React.PropTypes.bool,
-    selectPlayer: React.PropTypes.func.isRequired
+    index: React.PropTypes.number.isRequired,
+    isSelected: React.PropTypes.bool,
+    selectPlayer: React.PropTypes.func.isRequired,
+    dragCallback: React.PropTypes.func.isRequired,
+    dropCallback: React.PropTypes.func.isRequired,
+    endDragCallback: React.PropTypes.func.isRequired
   })
 )(DraggablePlayerItem);
 
-// https://github.com/gaearon/react-dnd/tree/master/examples/04%20Sortable
+// Wrap with React-dnd higher-order components.
+// Inspired from https://github.com/gaearon/react-dnd/tree/master/examples/04%20Sortable
 const cardSource = {
   beginDrag(props) {
     return {
@@ -41,13 +47,6 @@ const cardSource = {
     }
   }
 };
-function sourceCollect(connect, monitor) {
-  return {
-    connectDragSource: connect.dragSource(),
-    isDragging: monitor.isDragging()
-  };
-}
-
 const cardTarget = {
   hover(props, monitor, component) {
     const dragIndex = monitor.getItem().index;
@@ -82,15 +81,15 @@ const cardTarget = {
     monitor.getItem().index = hoverIndex;
   }
 };
-function targetCollect(connect, monitor) {
-  return {
-    connectDropTarget: connect.dropTarget()
-  };
-}
 
-export default
-  DropTarget('PLAYER', cardTarget, targetCollect)(
-    DragSource('PLAYER', cardSource, sourceCollect)(
-      DraggablePlayerItem
-    )
-  );
+DraggablePlayerItem = compose(
+  DropTarget('PLAYER', cardTarget, (connect, monitor) => ({
+    connectDropTarget: connect.dropTarget()
+  })),
+  DragSource('PLAYER', cardSource, (connect, monitor) => ({
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging()
+  }))
+)(DraggablePlayerItem);
+
+export default DraggablePlayerItem;

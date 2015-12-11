@@ -19,7 +19,7 @@ let AppContainer = React.createClass({
     // Fetch the new players from Mini-Mongo.
     const playerView = Players.views[this.props.playerView]();
     // Do not grab the indexes, so that the immutables do not change needlessly.
-    const fields = {index: 0}
+    const fields = {index: 0};
     const players = Players.find(playerView.find, {fields, ...playerView.options}).fetch();
     // Key players by id for easier tracking.
     const playersById = _.indexBy(players, '_id');

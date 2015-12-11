@@ -8,15 +8,15 @@ import DraggablePlayerItem from './DraggablePlayer';
 @pure
 @setPropTypes({
   players: mapOf(playerPropType).isRequired,
-  selectedId: React.PropTypes.string.isRequired,
+  selectedPlayer: playerPropType,
   playerView: React.PropTypes.string.isRequired,
   selectPlayer: React.PropTypes.func.isRequired
 })
 class PlayerList extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {dragPlayers: null};
-  }
+    this.state = {dragState: null};
+  };
 
   dragCallback = (playerId, newIndex) => {
     // Store the dragging state.
@@ -24,7 +24,7 @@ class PlayerList extends React.Component {
     this.setState({
       dragState: {playerId, newIndex}
     });
-  }
+  };
 
   dropCallback = () => {
     // Call 'updateIndexes' Meteor method with the array of {_id, index} pairs.
@@ -33,11 +33,11 @@ class PlayerList extends React.Component {
       data.push({_id: player._id, index});
     });
     Meteor.call('updateIndexes', data, () => this.endDragCallback());
-  }
+  };
 
   endDragCallback = () => {
     this.setState({dragState: null});
-  }
+  };
 
   getReorderedPlayers = () => {
     // Convert the map to a list.
@@ -47,24 +47,20 @@ class PlayerList extends React.Component {
       const [prevIndex, player] = players.findEntry(player => player._id === this.state.dragState.playerId);
       // Remove the player from its previous position, and insert it at the new index.
       players = players.delete(prevIndex).splice(this.state.dragState.newIndex, 0, player);
-      // @todo use withMutations to reduce the instanciations ?
-      //players = players.withMutations(list => {list.delete(prevIndex).splice(this.state.dragState.newIndex, 0, player)});
     }
     return players;
-  }
+  };
 
   render() {
     return (
       <ul className="leaderboard">
         {
-          this.getReorderedPlayers().map((player, index) => {
-          const playerId = player._id;
-          return (
+          this.getReorderedPlayers().map((player, index) => (
             this.props.playerView === 'by_index' ?
               <DraggablePlayerItem
-                key={ playerId }
+                key={ player._id }
                 player={ player }
-                selected={ this.props.selectedId == playerId }
+                isSelected={ this.props.selectedPlayer && this.props.selectedPlayer._id == player._id }
                 selectPlayer={ this.props.selectPlayer }
                 index={index}
                 dragCallback={ this.dragCallback }
@@ -73,18 +69,17 @@ class PlayerList extends React.Component {
               />
             :
               <PlayerItem
-                key={ playerId }
+                key={ player._id }
                 player={ player }
-                selected={ this.props.selectedId == playerId }
+                isSelected={ this.props.selectedPlayer && this.props.selectedPlayer._id == player._id }
                 selectPlayer={ this.props.selectPlayer }
               />
-            );
-          })
+          ))
         }
       </ul>
     );
-  }
-};
+  };
+}
 
 export default PlayerList;
 
