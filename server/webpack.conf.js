@@ -1,11 +1,12 @@
+console.log(path.resolve(path.dirname(__dirname)));
 module.exports = {
   entry: './main',
   resolve: {
-    // @todo see https://webpack.github.io/docs/configuration.html#resolve
-    //root: path.resolve(__dirname + '/..'),
-    //alias: {
-    //  'both' : '/both'
-    //},
+    root: path.resolve(path.dirname(__dirname)),
+    alias: {
+      'both' : 'both',
+      'server' : 'server'
+    },
     extensions: ['', '.js', '.jsx', '.json']
   },
   module: {

@@ -1,6 +1,4 @@
-import Players from '../both/models/player';
-
-console.log("Starting Leaderboard Server...");
+import Players from 'both/models/player';
 
 // run fixtures if db is empty
 Meteor.startup(function () {
@@ -10,9 +8,9 @@ Meteor.startup(function () {
       "Carl Friedrich Gauss", "Nikola Tesla", "Claude Shannon"];
     for (let [index, name] of names.entries()) {
       Players.insert({
-        name: name,
-        score: Math.floor(Math.random() * 10) * 5,
-        index
+        name,
+        index,
+        score: Math.floor(Math.random() * 10) * 5
       });
     };
   }

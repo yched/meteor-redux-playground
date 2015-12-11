@@ -1,6 +1,7 @@
-import './startup.jsx';
-import './publications.jsx';
-//import '../both/models/player';
-import '../both/models/methods';
+import 'both/models/methods';
+import 'server/publications';
+import 'server/fixtures';
+
+console.log("Starting Leaderboard Server...");
 
 // @todo see https://github.com/thereactivestack/kickstart-hugeapp

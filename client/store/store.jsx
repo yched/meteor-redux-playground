@@ -2,7 +2,7 @@ import * as reducers from './reducers';
 import { combineReducers } from 'redux-immutablejs';
 import logger from './middlewares/logger';
 import { devTools, persistState } from 'redux-devtools';
-import * as settings from '../../settings.jsx';
+import * as settings from 'settings.jsx';
 
 // Use a wrapped version of redux.createStore() that takes arrays of
 // middlewares and enhancers.

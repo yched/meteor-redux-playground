@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as Immutable from 'immutable';
 import visualizeRender from 'react-render-visualizer-decorator';
-import actions from '../store/actions'
-import Players from '../../both/models/player';
+import actions from 'client/store/actions'
+import Players from 'both/models/player';
 import { PlayerRecord } from './immutable_models/player';
 import App from './app';
 

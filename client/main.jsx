@@ -1,13 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import store from './store/store';
+import store from 'client/store/store';
 import { Provider } from 'react-redux';
 import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
-import AppContainer from './components/AppContainer';
-import * as settings from '../settings.jsx';
+import AppContainer from 'client/components/AppContainer';
+import * as settings from 'settings.jsx';
 
-//import '../both/models/player';
-import '../both/models/methods';
+import 'both/models/methods';
 
 Meteor.startup(function() {
   ReactDOM.render(

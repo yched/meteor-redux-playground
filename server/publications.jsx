@@ -1,4 +1,4 @@
-import Players from '../both/models/player';
+import Players from 'both/models/player';
 
 Meteor.publish('players', function(viewName, ...params) {
   const view = Players.views[viewName](...params);

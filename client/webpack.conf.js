@@ -1,18 +1,12 @@
 module.exports = {
   entry: './main',
-  //externals: {
-  //  "redux": "Redux",
-  //  "react-redux": "ReactRedux",
-  //  "redux-devtools": "ReduxDevTools",
-  //  "redux-devtools/lib/react": "ReactReduxDevTools",
-  //  "reselect": "Reselect",
-  //  "redux-actions": "ReduxActions",
-  //  "immutable": "Immutable",
-  //  "redux-immutablejs": "ReduxImmutable",
-  //  "react-immutable-proptypes": "ImmutablePropTypes",
-  //  "react-addons-pure-render-mixin": "PureRenderMixin"
-  //},
   resolve: {
+    root: path.resolve(path.dirname(__dirname)),
+    alias: {
+      'both' : 'both',
+      'client' : 'client',
+      'node_modules' : 'node_modules'
+    },
     extensions: ['', '.js', '.jsx', '.json']
   },
   module: {
