@@ -1,4 +1,4 @@
-import {Players} from './player';
+import Players from './player';
 
 Meteor.methods({
   incrementScore(playerId, increment) {

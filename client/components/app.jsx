@@ -13,15 +13,15 @@ const App = props => (
     <h1 className="title">Leaderboard</h1>
     <div className="subtitle">Select a scientist to give them points</div>
 
-    <input type="radio" name="sorting" defaultChecked={props.sort.get('field') === 'index'} onClick={() => props.actions.setSorting('index', 1)} />
+    <input type="radio" name="sorting" defaultChecked={props.playerView === 'by_index'} onClick={() => props.actions.setPlayerView('by_index')} />
     Manual sort
-    <input type="radio" name="sorting" defaultChecked={props.sort.get('field') === 'score'} onClick={() => props.actions.setSorting('score', -1)} />
+    <input type="radio" name="sorting" defaultChecked={props.playerView === 'by_score'} onClick={() => props.actions.setPlayerView('by_score')} />
     Sort by scores
 
     <div>
       <PlayerList players={props.players}
                   selectedId={props.selectedId}
-                  sort={props.sort}
+                  playerView={props.playerView}
                   selectPlayer={props.actions.selectPlayer}
                   dragPlayer={props.dragPlayer}
                   dropPlayer={props.dropPlayer} />
@@ -38,11 +38,12 @@ export default DragDropContext(HTML5Backend)(compose(
   setPropTypes({
     players: mapOf(playerPropType).isRequired,
     selectedId: React.PropTypes.string.isRequired,
+    playerView: React.PropTypes.string.isRequired,
     selectedPlayer: playerPropType,
 
     actions: React.PropTypes.shape({
       selectPlayer: React.PropTypes.func.isRequired,
-      setSorting: React.PropTypes.func.isRequired,
+      setPlayerView: React.PropTypes.func.isRequired,
     }).isRequired
   })
 )(App));

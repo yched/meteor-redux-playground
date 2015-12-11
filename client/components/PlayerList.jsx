@@ -9,6 +9,7 @@ import DraggablePlayerItem from './DraggablePlayer';
 @setPropTypes({
   players: mapOf(playerPropType).isRequired,
   selectedId: React.PropTypes.string.isRequired,
+  playerView: React.PropTypes.string.isRequired,
   selectPlayer: React.PropTypes.func.isRequired
 })
 class PlayerList extends React.Component {
@@ -59,7 +60,7 @@ class PlayerList extends React.Component {
           this.getReorderedPlayers().map((player, index) => {
           const playerId = player._id;
           return (
-            this.props.sort.get('field') === 'index' ?
+            this.props.playerView === 'by_index' ?
               <DraggablePlayerItem
                 key={ playerId }
                 player={ player }

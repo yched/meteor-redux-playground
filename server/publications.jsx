@@ -1,8 +1,6 @@
-import {Players} from '../both/models/player';
+import Players from '../both/models/player';
 
-Meteor.publish('players', function(sortField, sortOrder) {
-  let sort = {};
-  sort[sortField] = sortOrder;
-  var cursor = Players.find({}, {fields: {name: 1, score: 1, index: 1}, sort});
-  return cursor;
+Meteor.publish('players', function(viewName, ...params) {
+  const view = Players.views[viewName](...params);
+  return Players.find(view.find, {fields: {name: 1, score: 1, index: 1}, ...view.options});
 });

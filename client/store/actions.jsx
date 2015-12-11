@@ -1,6 +1,6 @@
 import {createAction} from 'redux-actions';
 
 export default {
-  setSorting: createAction('SET_SORTING', (field, order) => ({field, order})),
+  setPlayerView: createAction('SET_PLAYER_VIEW', viewName => (viewName)),
   selectPlayer: createAction('SELECT_PLAYER', playerId => playerId),
 }

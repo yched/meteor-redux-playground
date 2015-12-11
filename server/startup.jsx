@@ -1,4 +1,4 @@
-import {Players} from '../both/models/player';
+import Players from '../both/models/player';
 
 console.log("Starting Leaderboard Server...");
 

@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import * as Immutable from 'immutable';
 import visualizeRender from 'react-render-visualizer-decorator';
 import actions from '../store/actions'
-import { Players } from '../../both/models/player';
+import Players from '../../both/models/player';
 import { PlayerRecord } from './immutable_models/player';
 import App from './app';
 
@@ -14,16 +14,17 @@ let AppContainer = React.createClass({
 
   // @todo Tourne à chaque changement des props ???
   getMeteorData() {
-    Meteor.subscribe('players', this.props.sort.get('field'), this.props.sort.get('order'));
+    Meteor.subscribe('players', this.props.playerView);
 
     // Fetch the new players from Mini-Mongo.
-    // Apply the right sort.
-    const sort = {[this.props.sort.get('field')]: this.props.sort.get('order')};
+    const playerView = Players.views[this.props.playerView]();
     // Do not grab the indexes, so that the immutables do not change needlessly.
     const fields = {index: 0}
+    const players = Players.find(playerView.find, {fields, ...playerView.options}).fetch();
     // Key players by id for easier tracking.
-    const players = _.indexBy(Players.find({}, {sort, fields}).fetch(), '_id');
-    const immutablePlayers = this._immutablePlayers(players);
+    const playersById = _.indexBy(players, '_id');
+    // Turn into an Immutable hash.
+    const immutablePlayers = this._immutablePlayers(playersById);
 
     return {
       players: immutablePlayers,
@@ -68,7 +69,7 @@ let AppContainer = React.createClass({
 let mapStateToProps = (state) => {
   return {
     selectedId: state.getIn(['userInterface', 'selectedId']),
-    sort: state.getIn(['userInterface', 'sort'])
+    playerView: state.getIn(['userInterface', 'playerView'])
   };
 };
 

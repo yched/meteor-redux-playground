@@ -1,8 +1,8 @@
 import { createReducer } from 'redux-immutablejs';
 
 export default {
-  userInterface: createReducer({selectedId: '', sort: {field: 'index', order: 1}}, {
+  userInterface: createReducer({selectedId: '', playerView: 'by_index'}, {
     'SELECT_PLAYER': (state, {payload: playerId}) => state.merge({selectedId: playerId}),
-    'SET_SORTING': (state, {payload: {field, order}}) => state.merge({sort: {field, order}})
+    'SET_PLAYER_VIEW': (state, {payload: viewName}) => state.merge({playerView: viewName})
   }),
 }
