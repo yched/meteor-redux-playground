@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux-immutablejs';
 import { devTools, persistState } from 'redux-devtools';
+import thunk from 'redux-thunk';
 import * as reducers from './reducers';
 import logger from './middlewares/logger';
 import * as settings from 'settings.jsx';
@@ -8,6 +9,7 @@ import * as settings from 'settings.jsx';
 // middlewares and enhancers.
 import createStoreWithEnhancers from '../helpers/redux_helpers';
 const middleware = [
+  thunk,
   logger
 ];
 const enhancers = settings.debug ? [

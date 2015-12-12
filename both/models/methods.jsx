@@ -1,12 +1,13 @@
 import Players from './player';
 
 Meteor.methods({
-  incrementScore(playerId, increment) {
+  incrementPlayerScore(playerId, increment) {
+    //if (Meteor.isServer) Meteor._sleepForMs(3000);
     Players.update(playerId, {$inc: {score: increment}});
   },
-  updateIndexes(data) {
+  updatePlayerIndexes(indexesById) {
     //if (Meteor.isServer) Meteor._sleepForMs(3000);
-    data.forEach( ({_id, index}) => {
+    indexesById.forEach( ({_id, index}) => {
       Players.update(_id, {$set: {index}});
     });
   }

@@ -10,7 +10,8 @@ import DraggablePlayerItem from './DraggablePlayer';
   players: mapOf(playerPropType).isRequired,
   selectedPlayer: playerPropType,
   playerView: React.PropTypes.string.isRequired,
-  selectPlayer: React.PropTypes.func.isRequired
+  selectPlayer: React.PropTypes.func.isRequired,
+  updatePlayerIndexes: React.PropTypes.func.isRequired
 })
 class PlayerList extends React.Component {
   constructor(props) {
@@ -27,12 +28,9 @@ class PlayerList extends React.Component {
   };
 
   dropCallback = () => {
-    // Call 'updateIndexes' Meteor method with the array of {_id, index} pairs.
-    let data = [];
-    this.getReorderedPlayers().forEach((player, index) => {
-      data.push({_id: player._id, index});
-    });
-    Meteor.call('updateIndexes', data, () => this.endDragCallback());
+    // Dispatch the updatePlayerIndexes action. The endDragCallback is passed as a callback for the
+    // Meteor method call, to avoid UI flickering.
+    this.props.updatePlayerIndexes(this.getReorderedPlayers(), this.endDragCallback);
   };
 
   endDragCallback = () => {

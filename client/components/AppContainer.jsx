@@ -48,16 +48,11 @@ let AppContainer = React.createClass({
     });
   },
 
-  incrementPlayerScore(playerId, increment) {
-    Meteor.call('incrementScore', playerId, increment);
-  },
-
   render() {
     return (
       <App {...this.props}
         players={this.data.players}
         selectedPlayer={this.data.selectedPlayer}
-        incrementPlayerScore={this.incrementPlayerScore}
       />
     );
   }

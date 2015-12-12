@@ -22,11 +22,12 @@ const App = props => (
       <PlayerList players={props.players}
                   selectedPlayer={props.selectedPlayer}
                   playerView={props.playerView}
-                  selectPlayer={props.actions.selectPlayer} />
+                  selectPlayer={props.actions.selectPlayer}
+                  updatePlayerIndexes={props.actions.updatePlayerIndexes} />
     </div>
 
     <SelectPlayer selectedPlayer={props.selectedPlayer}
-                  incrementPlayerScore={props.incrementPlayerScore} />
+                  incrementPlayerScore={props.actions.incrementPlayerScore} />
 
   </div>
 );
@@ -43,6 +44,8 @@ export default compose(
     actions: React.PropTypes.shape({
       selectPlayer: React.PropTypes.func.isRequired,
       setPlayerView: React.PropTypes.func.isRequired,
+      incrementPlayerScore: React.PropTypes.func.isRequired,
+      updatePlayerIndexes: React.PropTypes.func.isRequired
     }).isRequired
   })
 )(App);
