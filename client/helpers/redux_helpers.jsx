@@ -1,21 +1,17 @@
 import * as redux from 'redux';
 
-let defaultEnhancers = [];
-let defaultMiddleware = [];
-
 // Let the caller pass arrays of middleware and enhancers, and take care
 // of wrapping them around redux.createStore.
 // Equivalent of :
 // redux.applyMiddleware(m1, m2, m3)(e1(e2(e3)))(redux.createStore)
-function createStoreEnhanced(middleware, enhancers) {
-  // Prepend default middleware and enhancers if any.
-  middleware = defaultMiddleware.concat(middleware);
-  enhancers = defaultEnhancers.concat(enhancers);
-
-  // Apply middlewares.
-  const middlewareStack = redux.applyMiddleware(...middleware);
-  // Add enhancers, and compose them around redux.createStore : compose(f, g, h) = (x) => f(g(h(x)))
-  return _.compose(middlewareStack, ...enhancers)(redux.createStore);
+function createStoreWithEnhancers(middleware = [], enhancers = []) {
+  // The middleware stack is the first enhancer.
+  enhancers = [redux.applyMiddleware(...middleware), ...enhancers];
+  // Compose enhancers into a single single wrapper.
+  // compose(f, g, h)  =  (...args) => f(g(h(...args)))
+  const wrapper = redux.compose(...enhancers);
+  // Wrap it around the original redux.createStore.
+  return wrapper(redux.createStore);
 }
 
-export default createStoreEnhanced;
+export default createStoreWithEnhancers;
