@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import store from 'client/store/store';
 import { Provider } from 'react-redux';
 import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
-import AppContainer from 'client/components/AppContainer';
+import AppContainer from 'client/containers/AppContainer';
 import * as settings from 'settings.jsx';
 
 import 'both/models/methods';

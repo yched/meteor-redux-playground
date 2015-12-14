@@ -1,7 +1,7 @@
 import React from 'react';
 import { visualizeRender } from 'client/helpers/react_helpers';
 import { compose, pure, setPropTypes } from 'recompose';
-import { playerPropType } from './immutable_models/player';
+import { playerPropType } from 'client/immutable_models/player';
 
 let PlayerItem = ({player, isSelected, selectPlayer}) => (
   <li className={ 'player' + (isSelected ? ' selected' : '') }

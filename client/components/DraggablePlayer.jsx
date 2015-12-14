@@ -1,7 +1,7 @@
 import React from 'react';
 import { findDOMNode } from 'react-dom';
 import { compose, pure, setPropTypes } from 'recompose';
-import { playerPropType } from './immutable_models/player';
+import { playerPropType } from 'client/immutable_models/player';
 import { DragSource, DropTarget } from 'react-dnd';
 import PlayerItem from './Player';
 

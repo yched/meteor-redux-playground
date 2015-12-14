@@ -1,7 +1,7 @@
 import React from 'react';
 import { pure, setPropTypes } from 'recompose';
 import { mapOf } from 'react-immutable-proptypes';
-import { playerPropType } from './immutable_models/player';
+import { playerPropType } from 'client/immutable_models/player';
 import PlayerItem from './Player';
 import DraggablePlayerItem from './DraggablePlayer';
 
@@ -58,7 +58,7 @@ class PlayerList extends React.Component {
               <DraggablePlayerItem
                 key={ player._id }
                 player={ player }
-                isSelected={ this.props.selectedPlayer && this.props.selectedPlayer._id == player._id }
+                isSelected={ this.props.selectedPlayer ? this.props.selectedPlayer._id === player._id : false}
                 selectPlayer={ this.props.selectPlayer }
                 index={index}
                 dragCallback={ this.dragCallback }
@@ -69,7 +69,7 @@ class PlayerList extends React.Component {
               <PlayerItem
                 key={ player._id }
                 player={ player }
-                isSelected={ this.props.selectedPlayer && this.props.selectedPlayer._id == player._id }
+                isSelected={ this.props.selectedPlayer ? this.props.selectedPlayer._id === player._id : false }
                 selectPlayer={ this.props.selectPlayer }
               />
           ))

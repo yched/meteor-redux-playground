@@ -1,7 +1,7 @@
 import React from 'react';
 import { compose, pure, setPropTypes, defaultProps } from 'recompose';
 import { visualizeRender } from 'client/helpers/react_helpers';
-import { playerPropType } from './immutable_models/player';
+import { playerPropType } from 'client/immutable_models/player';
 
 let SelectPlayer = props => {
   if (props.selectedPlayer) {
