@@ -6,6 +6,7 @@ import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import PlayerList from './PlayerList';
 import SelectPlayer from './SelectPlayer';
+import { Link } from 'react-router'
 
 const App = props => (
   <div className="outer">
@@ -29,6 +30,18 @@ const App = props => (
     <SelectPlayer selectedPlayer={props.selectedPlayer}
                   incrementPlayerScore={props.actions.incrementPlayerScore} />
 
+    <ul>
+      {/* use Link to route around the app */}
+      {[1, 2].map(listId => (
+        <li key={listId}>
+          {listId === props.listId ?
+            <div>List {listId}</div> :
+            <Link to={`/list/${listId}`}>List {listId}</Link>
+          }
+        </li>
+      ))}
+    </ul>
+
   </div>
 );
 
@@ -36,6 +49,7 @@ export default compose(
   DragDropContext(HTML5Backend),
   pure,
   setPropTypes({
+    listId: React.PropTypes.number.isRequired,
     players: mapOf(playerPropType).isRequired,
     playerView: React.PropTypes.string.isRequired,
     selectedPlayer: playerPropType,

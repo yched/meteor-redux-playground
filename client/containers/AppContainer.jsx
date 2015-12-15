@@ -8,43 +8,39 @@ import App from 'client/components/App';
 
 // Connect to the redux store :
 // Pick props that AppContainer receives from the store.
-const mapStateToProps = (state) => {
-  return {
-    playerView: state.getIn(['playersCollection', 'viewName']),
-    players: state.getIn(['playersCollection', 'players']),
-    // Use reselect selectors for derived data :
-    selectedPlayer: selectors.selectedPlayer(state)
-  };
-};
+const mapStateToProps = (state) => ({
+  playerView: state.playersCollection.get('viewName'),
+  players: state.playersCollection.get('players'),
+  // Use reselect selectors for derived data :
+  selectedPlayer: selectors.selectedPlayer(state)
+});
 // Also pass all actions pre-bound to the store's dispatch() in props.actions,
 // and the naked dispatch() itself for conveniency.
-const mapDispatchToProps = (dispatch) => {
-  return {
-    actions: bindActionCreators(actions, dispatch),
-    dispatch
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  actions: bindActionCreators(actions, dispatch),
+  dispatch
+});
 
 @connect(mapStateToProps, mapDispatchToProps)
 class AppContainer extends React.Component {
   componentWillMount() {
     // Subscribe to the Players publication, and track reactive changes.
-    this._subscribeToPlayers(this.props.playerView);
+    this._subscribeToPlayers(this.props.playerView, {listId: this.props.params.listId});
   }
 
   componentWillReceiveProps(nextProps) {
     // Re-subscribe if the view changed.
-    if (nextProps.playerView !== this.props.playerView) {
-      this._subscribeToPlayers(nextProps.playerView);
+    if (nextProps.playerView !== this.props.playerView || nextProps.params.listId !== this.props.params.listId) {
+      this._subscribeToPlayers(nextProps.playerView, {listId: nextProps.params.listId});
     }
   }
 
-  _subscribeToPlayers(viewName) {
+  _subscribeToPlayers(viewName, params) {
     // Subscribe to 'players' publication, with the current view.
-    this.sub = Meteor.subscribe('players', viewName);
+    this.sub = Meteor.subscribe('players', viewName, params);
     // Track the Minimongo cursor on the request we're interested in.
     this.track && this.track.stop();
-    this.track = this.props.actions.trackPlayerCollection(Players.getCursor(viewName));
+    this.track = this.props.actions.trackPlayerCollection(Players.getCursor(viewName, params));
   }
 
   componentWillUnmount() {
@@ -55,8 +51,9 @@ class AppContainer extends React.Component {
   }
 
   render() {
+    const appProps = {...this.props, listId: parseInt(this.props.params.listId)};
     return (
-      <App {...this.props} />
+      <App {...appProps} />
     );
   }
 }

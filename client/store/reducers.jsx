@@ -41,7 +41,7 @@ export default {
     },
     'TRACK_PLAYER_COLLECTION': (state, {payload: {docs}}) => {
       // Ditch the players 'index' property to avoid needless immutable changes and repaints.
-      let players = _.map(docs, player => _.omit(player, 'index'));
+      let players = _.map(docs, player => _.omit(player, 'index', 'listId'));
       // Key players by id for easier tracking.
       players = _.indexBy(players, '_id');
 
