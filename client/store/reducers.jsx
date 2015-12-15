@@ -39,30 +39,28 @@ export default {
         }) :
         state;
     },
-    'TRACK_PLAYER_COLLECTION': (state, {payload: {docs}}) => state.merge({
-      players: getImmutablePlayers(docs, state.get('players'))
-    })
-  })
-}
+    'TRACK_PLAYER_COLLECTION': (state, {payload: {docs}}) => {
+      // Ditch the players 'index' property to avoid needless immutable changes and repaints.
+      let players = _.map(docs, player => _.omit(player, 'index'));
+      // Key players by id for easier tracking.
+      players = _.indexBy(players, '_id');
 
-/**
- * Returns an immutable list for players, trying to preserve previous immutable
- * PlayerRecords when they still match.
- */
-function getImmutablePlayers(players, prevImmutable) {
-  // Ditch the players 'index' property to avoid needless immutable changes and repaints.
-  players = _.map(players, player => _.omit(player, 'index'));
-  // Key players by id for easier tracking.
-  players = _.indexBy(players, '_id');
+      // Build the new immutable list for players, trying to keep existing
+      // PlayerRecords when they still match.
+      const prev = state.get('players');
+      const next = Immutable.fromJS(players, (key, data) => {
+        // Merge the new player data into the previous immutable if there is one,
+        // else create a new record.
+        if (key) {
+          return prev.has(key) ? prev.get(key).merge(data) : new PlayerRecord(data);
+        }
+        // The function is called one last time for the whole list, with key = ''.
+        return data.toMap();
+      });
 
-  // Build the new Immutable list, preserving from the old one when possible.
-  return Immutable.fromJS(players, (key, data) => {
-    // The function is called one last time for the whole list, with key = ''.
-    if (!key) {
-      return data.toMap();
+      return state.merge({
+        players: next
+      });
     }
-    // Merge the new player data into the previous immutable if there is one,
-    // else create a new record.
-    return prevImmutable.has(key) ? prevImmutable.get(key).merge(data) : new PlayerRecord(data);
-  });
+  })
 }

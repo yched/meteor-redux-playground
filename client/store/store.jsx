@@ -25,4 +25,12 @@ let enhancers = settings.debug ? [
 const createStore = createStoreWithEnhancers(middleware, enhancers);
 
 const reducer = combineReducers(reducers);
-export default createStore(reducer);
+const store = createStore(reducer)
+
+// Enable Webpack hot module replacement for reducers
+module.hot && module.hot.accept('./reducers', () => {
+  const nextReducer = combineReducers(require('./reducers.jsx'));
+  store.replaceReducer(nextReducer)
+});
+
+export default store;
