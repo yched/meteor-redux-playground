@@ -60,10 +60,6 @@ class App extends React.Component {
 
         <Navigation listId={props.listId} />
 
-        <div className="logo"></div>
-        <h1 className="title">Leaderboard</h1>
-        <div className="subtitle">Select a scientist to give them points</div>
-
         <input type="radio" name="sorting" defaultChecked={props.playerView === 'by_index'} onClick={() => props.actions.setPlayerView('by_index')} />
         Manual sort
         <input type="radio" name="sorting" defaultChecked={props.playerView === 'by_score'} onClick={() => props.actions.setPlayerView('by_score')} />

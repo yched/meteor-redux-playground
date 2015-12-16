@@ -26,9 +26,7 @@ const mapDispatchToProps = (dispatch) => ({
 class AppContainer extends React.Component {
   render() {
     return (
-      <div className="outer">
-        <App {...this.props} />
-      </div>
+      <App {...this.props} />
     );
   }
 }

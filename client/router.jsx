@@ -1,13 +1,16 @@
 import React from 'react';
 import { ReduxRouter } from 'redux-router';
-import { Route } from 'react-router';
+import { Route, IndexRoute } from 'react-router';
+import Layout from 'client/components/Layout';
+import Navigation from 'client/components/Navigation';
 import AppContainer from 'client/containers/AppContainer';
-import IndexContainer from 'client/containers/IndexContainer';
 
 export default (
   <ReduxRouter>
-    <Route path="/" component={IndexContainer} />
-    <Route path="/list/:listId" component={AppContainer} />
+    <Route path="/" component={Layout}>
+      <IndexRoute component={Navigation} />
+      <Route path="list/:listId" component={AppContainer} />
+    </Route>
   </ReduxRouter>
 );
 
