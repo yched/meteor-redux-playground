@@ -10,6 +10,8 @@ import App from 'client/components/App';
 const mapStateToProps = (state) => ({
   playerView: state.playersCollection.get('viewName'),
   players: state.playersCollection.get('players'),
+  // Grab URL param from the router state
+  listId: parseInt(state.router.params.listId),
   // Use reselect selectors for derived data :
   selectedPlayer: selectors.selectedPlayer(state)
 });
@@ -23,10 +25,9 @@ const mapDispatchToProps = (dispatch) => ({
 @connect(mapStateToProps, mapDispatchToProps)
 class AppContainer extends React.Component {
   render() {
-    const appProps = {...this.props, listId: parseInt(this.props.params.listId)};
     return (
       <div className="outer">
-        <App {...appProps} />
+        <App {...this.props} />
       </div>
     );
   }

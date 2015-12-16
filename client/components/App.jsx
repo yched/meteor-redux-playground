@@ -13,13 +13,13 @@ import Players from 'both/models/player';
 @pure
 @setPropTypes({
   listId: React.PropTypes.number.isRequired,
-  players: mapOf(playerPropType).isRequired,
   playerView: React.PropTypes.string.isRequired,
+  players: mapOf(playerPropType).isRequired,
   selectedPlayer: playerPropType,
 
   actions: React.PropTypes.shape({
-    selectPlayer: React.PropTypes.func.isRequired,
     setPlayerView: React.PropTypes.func.isRequired,
+    selectPlayer: React.PropTypes.func.isRequired,
     incrementPlayerScore: React.PropTypes.func.isRequired,
     updatePlayerIndexes: React.PropTypes.func.isRequired
   }).isRequired
