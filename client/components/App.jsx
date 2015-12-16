@@ -6,7 +6,7 @@ import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import PlayerList from './PlayerList';
 import SelectPlayer from './SelectPlayer';
-import { Link } from 'react-router'
+import Navigation from './Navigation';
 import Players from 'both/models/player';
 
 @DragDropContext(HTML5Backend)
@@ -56,7 +56,10 @@ class App extends React.Component {
   render() {
     const props = this.props;
     return (
-      <div className="outer">
+      <div>
+
+        <Navigation listId={props.listId} />
+
         <div className="logo"></div>
         <h1 className="title">Leaderboard</h1>
         <div className="subtitle">Select a scientist to give them points</div>
@@ -76,17 +79,6 @@ class App extends React.Component {
 
         <SelectPlayer selectedPlayer={props.selectedPlayer}
                       incrementPlayerScore={props.actions.incrementPlayerScore} />
-
-        <ul>
-          {[1, 2].map(listId => (
-            <li key={listId}>
-              {listId !== props.listId ?
-                <Link to={`/list/${listId}`}>List {listId}</Link> :
-                <div>List {listId}</div>
-              }
-            </li>
-          ))}
-        </ul>
 
       </div>
     )

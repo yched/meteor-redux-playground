@@ -25,7 +25,9 @@ class AppContainer extends React.Component {
   render() {
     const appProps = {...this.props, listId: parseInt(this.props.params.listId)};
     return (
-      <App {...appProps} />
+      <div className="outer">
+        <App {...appProps} />
+      </div>
     );
   }
 }

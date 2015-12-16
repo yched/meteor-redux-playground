@@ -1,11 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import store from 'client/store/store';
 import { Provider } from 'react-redux';
 import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
-import { ReduxRouter } from 'redux-router';
+import store from 'client/store/store';
 import * as settings from 'settings.jsx';
-import routes from './routes';
+import router from './router';
 
 import 'both/models/methods';
 
@@ -13,9 +12,7 @@ Meteor.startup(function() {
   ReactDOM.render(
     <div>
       <Provider store={store}>
-        <ReduxRouter>
-          {routes}
-        </ReduxRouter>
+        {router}
       </Provider>
       { settings.debug ?
         <DebugPanel top right bottom>
