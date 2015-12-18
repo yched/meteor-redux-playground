@@ -1,25 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
-import store from 'client/store/store';
+import Root from 'client/components/Root';
 import * as settings from 'settings.jsx';
-import router from './router';
+import store from 'client/store/store';
+import routes from './routes';
 
 import 'both/models/methods';
 
 Meteor.startup(function() {
   ReactDOM.render(
-    <div>
-      <Provider store={store}>
-        {router}
-      </Provider>
-      { settings.debug ?
-        <DebugPanel top right bottom>
-          <DevTools store={store} monitor={LogMonitor} />
-        </DebugPanel>
-        : ''
-      }
-    </div>,
+    <Root store={store}
+          routes={routes}
+          debug={settings.debug} />,
     document.getElementById('app'));
 });

@@ -1,10 +1,16 @@
 import {createAction} from 'redux-actions';
+import { pushPath } from 'redux-simple-router'
 
 export default {
+  // Change the router path.
+  pushPath,
+
+  // Track updtaes to a Mongo collection cursor.
+  trackPlayerCollection: createAction('TRACK_PLAYER_COLLECTION', cursor => cursor),
+
   selectPlayer: createAction('SELECT_PLAYER', playerId => playerId),
   setPlayerView: createAction('SET_PLAYER_VIEW', viewName => viewName),
 
-  trackPlayerCollection: createAction('TRACK_PLAYER_COLLECTION', cursor => cursor),
 
   // Side effect (Meteor method call) via redux-thunk
   incrementPlayerScore: (playerId, increment, callback) =>

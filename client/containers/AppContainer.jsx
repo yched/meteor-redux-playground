@@ -10,8 +10,6 @@ import App from 'client/components/App';
 const mapStateToProps = (state) => ({
   playerView: state.playersCollection.get('viewName'),
   players: state.playersCollection.get('players'),
-  // Grab URL param from the router state
-  listId: parseInt(state.router.params.listId),
   // Use reselect selectors for derived data :
   selectedPlayer: selectors.selectedPlayer(state)
 });
@@ -21,8 +19,13 @@ const mapDispatchToProps = (dispatch) => ({
   actions: bindActionCreators(actions, dispatch),
   dispatch
 });
+// Add the URL param from the router state
+const mergeProps = (stateProps, dispatchProps, ownProps) => ({
+  ...stateProps, ...dispatchProps, ...ownProps,
+  listId: parseInt(ownProps.params.listId),
+});
 
-@connect(mapStateToProps, mapDispatchToProps)
+@connect(mapStateToProps, mapDispatchToProps, mergeProps)
 class AppContainer extends React.Component {
   render() {
     return (
