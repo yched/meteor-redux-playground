@@ -4,6 +4,7 @@ import { mapOf } from 'react-immutable-proptypes';
 import { playerPropType } from 'client/immutable_models/player';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
+import Helmet from 'react-helmet';
 import PlayerList from './PlayerList';
 import SelectPlayer from './SelectPlayer';
 import Navigation from './Navigation';
@@ -57,6 +58,7 @@ class App extends React.Component {
     const props = this.props;
     return (
       <div>
+        <Helmet title={`Meteor Leaderboard - List ${props.listId}`} />
 
         <Navigation listId={props.listId} />
 
