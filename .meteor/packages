@@ -13,10 +13,7 @@ tracker
 static-html
 mobile-experience
 
-msavin:mongol
-jquery
-
 webpack:webpack
 
-react-meteor-data
-skinnygeek1010:flux-helpers
+meteorhacks:fast-render
+#routepolicy

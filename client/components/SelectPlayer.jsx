@@ -22,7 +22,7 @@ let SelectPlayer = props => {
 };
 
 SelectPlayer = compose(
-  visualizeRender,
+  //visualizeRender,
   pure,
   setPropTypes({
     selectedPlayer: playerPropType,

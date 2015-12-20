@@ -6,17 +6,27 @@ import {createAction} from 'redux-actions';
 // - also pass the collection to the callback, so that we can use a single action for
 //   all tracked collections.
 const trackMeteorCollection = store => next => action => {
-  // If the payload is a Mongo Cursor.
-  if (action.payload && (action.payload instanceof Mongo.Cursor || action.payload instanceof Mongo.Collection)) {
-    // If we were passed a collection, track all docs.
+  // If the payload is a Mongo Cursor or Collection
+  // @todo "instanceof Mongo.Cursor" doesn't work on the server ??
+  //if (action.payload && (action.payload instanceof Mongo.Cursor || action.payload instanceof Mongo.Collection)) {
+  if (action.payload && (typeof action.payload.fetch === 'function' || typeof action.payload.find === 'function')) {
+    // If we were passed a collection, track all content.
     // If we were passed directly a cursor, track that cursor.
     const cursor = (action.payload instanceof Mongo.Collection) ? action.payload.find() : action.payload;
-    // Track the cursor to trigger the action on change.
+
+    const dispatch = () => store.dispatch({...action, payload: {docs: cursor.fetch(), cursor}});
+    // On the client, track the cursor to dispatch the action on change.
     // We return the Tracker computation so that the caller can call stop() on it to stop tracking.
-    return Tracker.autorun(function (computation) {
-      // fetch() on the cursor to trigger autorun.
-      store.dispatch({...action, payload: {docs: cursor.fetch(), cursor}});
-    });
+    if (Meteor.isClient) {
+      return Tracker.autorun(function (computation) {
+        // fetch() on the cursor triggers autorun.
+        dispatch()
+      });
+    }
+    // When doing serever-side rendering, just dispatch the action.
+    else {
+      dispatch();
+    }
   }
   // Else just pass the action through.
   else {
