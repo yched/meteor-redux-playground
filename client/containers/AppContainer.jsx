@@ -7,9 +7,11 @@ import App from 'client/components/App';
 
 // Connect to the redux store :
 // Pick props that AppContainer receives from the store.
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state, props) => ({
   playerView: state.playersCollection.get('viewName'),
   players: state.playersCollection.get('players'),
+  // Add the URL param passed by the router
+  listId: parseInt(props.params.listId),
   // Use reselect selectors for derived data :
   selectedPlayer: selectors.selectedPlayer(state)
 });
@@ -19,13 +21,8 @@ const mapDispatchToProps = (dispatch) => ({
   actions: bindActionCreators(actions, dispatch),
   dispatch
 });
-// Add the URL param from the router state
-const mergeProps = (stateProps, dispatchProps, ownProps) => ({
-  ...stateProps, ...dispatchProps, ...ownProps,
-  listId: parseInt(ownProps.params.listId),
-});
 
-@connect(mapStateToProps, mapDispatchToProps, mergeProps)
+@connect(mapStateToProps, mapDispatchToProps)
 class AppContainer extends React.Component {
   render() {
     return (
