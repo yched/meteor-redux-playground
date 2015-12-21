@@ -9,11 +9,9 @@ console.log("Starting Leaderboard Server...");
 
 // Import what's needed for Server-Side Rendering.
 import ReactRouterSSR from './ssr.jsx'
-import { createMemoryHistory } from 'history'
 import { syncReduxAndRouter } from 'redux-simple-router'
-import { withProps } from 'recompose'
-import createStore from 'client/store/store'
 import routes from 'client/routes'
+import createStore from 'client/store/store'
 import Root from 'client/components/Root'
 
 if (settings.ssr) {
@@ -36,22 +34,15 @@ if (settings.ssr) {
 // see https://github.com/jlongster/react-redux-universal-hot-example/commit/e13b93518c8c9b5524ad50f1c566ed6c480c1888?diff=split
 
   Meteor.startup(() => {
-    // Initialize the store.
-    const store = createStore();
-
-    // Create the browser navigation history and bind it to the store.
-    const history = createMemoryHistory();
-    syncReduxAndRouter(history, store);
-
     // Do the rendering.
     ReactRouterSSR.Run(routes, {}, {
-      // Wrap in the <Root> component, bound to our store.
-      wrapper: withProps({store}, Root),
-      // Put the matched url in the history, so that it dispatches to the store.
-      preRender: (req, res) => history.replace(req.url),
-      // After rendering was done, pass the resulting store state to the client
-      // so that he can start from there.
-      appendCallback: () => `<script>window.__INITIAL_STATE__ = ${JSON.stringify(store.getState())}</script>`
+      wrapper: Root,
+      createReduxStore: (history) => {
+        // Initialize the store.
+        const store = createStore();
+        syncReduxAndRouter(history, store);
+        return store;
+      }
     });
   });
 }

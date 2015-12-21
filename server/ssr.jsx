@@ -28,9 +28,10 @@ function IsAppUrl(req) {
 
 import React from 'react'
 import ReactDOMServer from 'node_modules/react-dom/server'
-import { RoutingContext, match } from 'react-router';
-import cookieParser from 'cookie-parser';
-import Helmet from 'react-helmet';
+import { RoutingContext, match } from 'react-router'
+import * as history from 'history'
+import cookieParser from 'cookie-parser'
+import Helmet from 'react-helmet'
 
 let webpackStats;
 
@@ -88,6 +89,11 @@ ReactRouterSSR.Run = function(routes, clientOptions, serverOptions) {
           res.end();
         } else if (renderProps) {
           console.log('route match', renderProps.location.pathname, renderProps.params);
+          if (typeof serverOptions.createReduxStore !== 'undefined') {
+            const myHistory = history.useQueries(history.createMemoryHistory)();
+            myHistory.replace(req.url);
+            serverOptions.reduxStore = serverOptions.createReduxStore(myHistory);
+          }
           sendSSRHtml(clientOptions, serverOptions, context, req, res, next, renderProps);
         } else {
           res.writeHead(404);
@@ -133,8 +139,11 @@ function patchResWrite(clientOptions, serverOptions, originalWrite, css, html, h
         data = addAssetsChunks(serverOptions, data);
       }
 
-      if (typeof serverOptions.appendCallback !== 'undefined') {
-        data = data.replace('</body>', serverOptions.appendCallback() + '</body>');
+      // After rendering was done, pass the resulting store state to the client
+      // so that he can start from there.
+      // @todo use res.pushData in generateSSRData() instead ?
+      if (typeof serverOptions.reduxStore !== 'undefined') {
+        data = data.replace('</body>', `<script>window.__INITIAL_STATE__ = ${JSON.stringify(serverOptions.reduxStore.getState())}</script></body>`);
       }
     }
 
@@ -195,7 +204,11 @@ function generateSSRData(serverOptions, context, req, res, renderProps) {
       let app = <RoutingContext {...renderProps} />;
 
       if (serverOptions.wrapper) {
-        app = <serverOptions.wrapper>{app}</serverOptions.wrapper>;
+        const wrapperProps = {};
+        if (typeof serverOptions.reduxStore !== 'undefined') {
+          wrapperProps.store = serverOptions.reduxStore;
+        }
+        app = <serverOptions.wrapper {...wrapperProps}>{app}</serverOptions.wrapper>;
       }
 
       html = ReactDOMServer.renderToString(app);
@@ -207,6 +220,11 @@ function generateSSRData(serverOptions, context, req, res, renderProps) {
       if (serverOptions.postRender) {
         serverOptions.postRender(req, res);
       }
+
+      // Pass the resulting redux state to the client.
+      //if (typeof serverOptions.reduxStore !== 'undefined') {
+      //  res.pushData('redux-initial-state', serverOptions.reduxStore.getState());
+      //}
 
       Meteor.subscribe = originalSubscribe;
 

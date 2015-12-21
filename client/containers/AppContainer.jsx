@@ -25,6 +25,7 @@ const mapDispatchToProps = (dispatch) => ({
 @connect(mapStateToProps, mapDispatchToProps)
 class AppContainer extends React.Component {
   render() {
+    console.log('AppContainer');
     return (
       <App {...this.props} />
     );

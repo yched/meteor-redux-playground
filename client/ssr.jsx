@@ -1,9 +1,9 @@
 // Stolen from reactrouter:react-router-ssr
 
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react'
+import ReactDOM from 'react-dom'
 import * as history  from 'history'
-import { Router } from 'react-router';
+import { Router } from 'react-router'
 
 let ReactRouterSSR = {};
 
