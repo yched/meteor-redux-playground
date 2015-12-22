@@ -32,7 +32,6 @@ import { RoutingContext, match } from 'react-router'
 import * as history from 'history'
 import cookieParser from 'cookie-parser'
 import Helmet from 'react-helmet'
-import Promise from 'promise'
 
 let webpackStats;
 
@@ -216,7 +215,7 @@ function generateSSRData(serverOptions, context, req, res, renderProps) {
           // Pass the store to the wrapper.
           wrapperProps.store = serverOptions.reduxStore;
           // Wait for all components data to be available.
-          fetchComponentData(renderProps, serverOptions.reduxStore); //  .await();
+          fetchComponentData(renderProps, serverOptions.reduxStore).await();
         }
         app = <serverOptions.wrapper {...wrapperProps}>{app}</serverOptions.wrapper>;
       }

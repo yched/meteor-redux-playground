@@ -7,6 +7,12 @@ console.log("Starting Leaderboard Server...");
 
 // @todo see https://github.com/thereactivestack/kickstart-hugeapp
 
+// Temporary fix so that externals defined by the various meteor extensions
+// (like Promise) are available in the global space.
+// See https://github.com/thereactivestack/meteor-webpack/issues/38#issuecomment-166626296
+import Symbol from 'symbol';
+global.Symbol = Symbol;
+
 // Import what's needed for Server-Side Rendering.
 import ReactRouterSSR from './ssr.jsx'
 import { syncReduxAndRouter } from 'redux-simple-router'
@@ -16,6 +22,7 @@ import Root from 'client/components/Root'
 
 if (settings.ssr) {
   console.log('SSR !!');
+
 // @todo
 // http://rackt.org/redux/docs/recipes/ServerRendering.html
 // You may want to read Async Actions to learn more about expressing asynchronous
@@ -40,7 +47,7 @@ if (settings.ssr) {
     ReactRouterSSR.Run(routes, {}, {
       wrapper: Root,
       createReduxStore: (history) => {
-        // Initialize the store.
+        // Initialize the store and bind it to the history.
         const store = createStore();
         syncReduxAndRouter(history, store);
         return store;
