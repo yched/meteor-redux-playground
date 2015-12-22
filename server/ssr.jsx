@@ -322,6 +322,7 @@ if (Package.mongo && !Package.autopublish) {
     } else {
       args.push({ $or: Mongo.Collection._publishSelectorsSSR[this._name] });
     }
+
     return originalFindOne.apply(this, args);
   };
 
@@ -342,6 +343,7 @@ if (Package.mongo && !Package.autopublish) {
     } else {
       args.push({ $or: Mongo.Collection._publishSelectorsSSR[this._name] });
     }
+
     return originalFind.apply(this, args);
   };
 
