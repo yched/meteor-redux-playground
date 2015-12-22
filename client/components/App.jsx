@@ -8,7 +8,6 @@ import Helmet from 'react-helmet';
 import PlayerList from './PlayerList';
 import SelectPlayer from './SelectPlayer';
 import Navigation from './Navigation';
-import Players from 'both/models/player';
 
 @DragDropContext(HTML5Backend)
 @pure
@@ -16,6 +15,7 @@ import Players from 'both/models/player';
   listId: React.PropTypes.number.isRequired,
   playerView: React.PropTypes.string.isRequired,
   players: mapOf(playerPropType).isRequired,
+  playersLoaded: React.PropTypes.bool.isRequired,
   selectedPlayer: playerPropType,
 
   actions: React.PropTypes.shape({
@@ -26,34 +26,6 @@ import Players from 'both/models/player';
   }).isRequired
 })
 class App extends React.Component {
-
-  // Subscribe to the Players publication, and track reactive changes.
-  componentWillMount() {
-    this._subscribeToPlayers(this.props.playerView, {listId: this.props.listId});
-  }
-
-  // Re-subscribe if the view changed.
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.playerView !== this.props.playerView || nextProps.listId !== this.props.listId) {
-      this._subscribeToPlayers(nextProps.playerView, {listId: nextProps.listId});
-    }
-  }
-
-  _subscribeToPlayers(viewName, params) {
-    // Subscribe to 'players' publication, with the current view.
-    this.sub = Meteor.subscribe('players', viewName, params);
-    // Track the Minimongo cursor on the request we're interested in.
-    this.track && this.track.stop();
-    this.track = this.props.actions.trackPlayerCollection(Players.getCursor(viewName, params));
-  }
-
-  componentWillUnmount() {
-    // Unsubscribe to 'players' publication.
-    this.sub.stop();
-    // Stop tracking the request.
-    this.track.stop();
-  }
-
   render() {
     const props = this.props;
     return (
@@ -67,21 +39,23 @@ class App extends React.Component {
         <input type="radio" name="sorting" defaultChecked={props.playerView === 'by_score'} onClick={() => props.actions.setPlayerView('by_score')} />
         Sort by scores
 
-        <div>
-          <PlayerList players={props.players}
-                      selectedPlayer={props.selectedPlayer}
-                      playerView={props.playerView}
-                      selectPlayer={props.actions.selectPlayer}
-                      updatePlayerIndexes={props.actions.updatePlayerIndexes} />
-        </div>
+        { props.playersLoaded ?
+          <div>
+            <PlayerList players={props.players}
+                        selectedPlayer={props.selectedPlayer}
+                        playerView={props.playerView}
+                        selectPlayer={props.actions.selectPlayer}
+                        updatePlayerIndexes={props.actions.updatePlayerIndexes}/>
 
-        <SelectPlayer selectedPlayer={props.selectedPlayer}
-                      incrementPlayerScore={props.actions.incrementPlayerScore} />
-
+            <SelectPlayer selectedPlayer = {props.selectedPlayer}
+                          incrementPlayerScore={props.actions.incrementPlayerScore} />
+          </div>
+        :
+          <div>Loading</div>
+        }
       </div>
     )
   }
 }
 
 export default App;
-

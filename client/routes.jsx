@@ -11,11 +11,3 @@ export default (
   </Route>
 );
 
-
-//<Route path="/" component={AppContainer}>
-//  <Route path="about" component={About}/>
-//  <Route path="users" component={Users}>
-//    <Route path="/user/:userId" component={User}/>
-//  </Route>
-//  <Route path="*" component={NoMatch}/>
-//</Route>

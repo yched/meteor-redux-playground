@@ -32,6 +32,7 @@ import { RoutingContext, match } from 'react-router'
 import * as history from 'history'
 import cookieParser from 'cookie-parser'
 import Helmet from 'react-helmet'
+import Promise from 'promise'
 
 let webpackStats;
 
@@ -87,19 +88,25 @@ ReactRouterSSR.Run = function(routes, clientOptions, serverOptions) {
         } else if (redirectLocation) {
           res.writeHead(302, { Location: redirectLocation.pathname + redirectLocation.search })
           res.end();
-        } else if (renderProps) {
-          console.log('route match', renderProps.location.pathname, renderProps.params);
-          if (typeof serverOptions.createReduxStore !== 'undefined') {
-            const myHistory = history.useQueries(history.createMemoryHistory)();
-            myHistory.replace(req.url);
-            serverOptions.reduxStore = serverOptions.createReduxStore(myHistory);
-          }
-          sendSSRHtml(clientOptions, serverOptions, context, req, res, next, renderProps);
-        } else {
+        } else if (!renderProps) {
           res.writeHead(404);
           res.write('Not found');
           res.end();
         }
+
+        console.log('route match', renderProps.location.pathname, renderProps.params);
+        if (typeof serverOptions.createReduxStore !== 'undefined') {
+          // Create a history and set the current path, in case the store wants
+          // to bind to it using redux-simple-router's syncReduxAndRouter().
+          const myHistory = history.useQueries(history.createMemoryHistory)();
+          myHistory.replace(req.url);
+          // Create the store.
+          const store = serverOptions.createReduxStore(myHistory);
+
+          serverOptions.reduxStore = store;
+        }
+
+        sendSSRHtml(clientOptions, serverOptions, context, req, res, next, renderProps);
       }));
 
       Meteor.userId = originalUserId;
@@ -206,7 +213,10 @@ function generateSSRData(serverOptions, context, req, res, renderProps) {
       if (serverOptions.wrapper) {
         const wrapperProps = {};
         if (typeof serverOptions.reduxStore !== 'undefined') {
+          // Pass the store to the wrapper.
           wrapperProps.store = serverOptions.reduxStore;
+          // Wait for all components data to be available.
+          fetchComponentData(renderProps, serverOptions.reduxStore); //  .await();
         }
         app = <serverOptions.wrapper {...wrapperProps}>{app}</serverOptions.wrapper>;
       }
@@ -239,6 +249,16 @@ function generateSSRData(serverOptions, context, req, res, renderProps) {
   }
 
   return { html, css, head };
+}
+
+function fetchComponentData(renderProps, reduxStore) {
+  const promises = renderProps.components
+    .filter((component) => !!component) // Weed out 'undefined' routes
+    .filter((component) => component.needs) // only look at ones with a static needs()
+    .map((component) => component.needs(reduxStore.getState, renderProps))    // pull out needs() methods
+    .map(need => reduxStore.dispatch(need))  // call needs() methods
+
+  return Promise.all(promises);
 }
 
 function SSRSubscribe(context) {
@@ -323,7 +343,7 @@ if (Package.mongo && !Package.autopublish) {
     } else {
       args.push({ $or: Mongo.Collection._publishSelectorsSSR[this._name] });
     }
-    return originalFind.apply(this, args);;
+    return originalFind.apply(this, args);
   };
 
   Mongo.Collection._fakePublish = function(result) {

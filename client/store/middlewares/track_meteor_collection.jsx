@@ -14,24 +14,22 @@ const trackMeteorCollection = store => next => action => {
     // If we were passed directly a cursor, track that cursor.
     const cursor = (action.payload instanceof Mongo.Collection) ? action.payload.find() : action.payload;
 
-    const dispatch = () => store.dispatch({...action, payload: {docs: cursor.fetch(), cursor}});
     // On the client, track the cursor to dispatch the action on change.
     // We return the Tracker computation so that the caller can call stop() on it to stop tracking.
     if (Meteor.isClient) {
       return Tracker.autorun(function (computation) {
         // fetch() on the cursor triggers autorun.
-        dispatch()
+        store.dispatch({...action, payload: {docs: cursor.fetch(), cursor}});
       });
     }
-    // When doing serever-side rendering, just dispatch the action.
-    else {
-      dispatch();
-    }
+    // When doing serever-side rendering, we don't want to track anything.
+    // Just dispatch the docs once right away, and return a dummy stop() function.
+    store.dispatch({...action, payload: {docs: cursor.fetch(), cursor}});
+    return () => {};
   }
-  // Else just pass the action through.
-  else {
-    return next(action);
-  }
+
+  // Else ignore the action and just pass it through to the next middleware.
+  return next(action);
 };
 
 export default trackMeteorCollection;

@@ -16,4 +16,6 @@ mobile-experience
 webpack:webpack
 
 meteorhacks:fast-render
+promise
 #routepolicy
+dburles:mongo-collection-instances

@@ -30,12 +30,13 @@ export default {
     'SELECT_PLAYER': (state, {payload: playerId}) => state.merge({selectedId: playerId}),
   }),
 
-  playersCollection: createReducer({viewName: 'by_index', players: {}}, {
+  playersCollection: createReducer({viewName: 'by_index', players: {}, loaded: false}, {
     'SET_PLAYER_VIEW': (state, {payload: viewName}) => {
-      // Do nothing if the incoming viewName is invalid.
-      return Players.views.hasOwnProperty(viewName) ?
+      // Do nothing if the incoming viewName is unchanged or invalid.
+      return viewName !== state.get('viewName') && Players.views.hasOwnProperty(viewName) ?
         state.merge({
-          viewName
+          viewName,
+          loaded: false
         }) :
         state;
     },
@@ -46,6 +47,7 @@ export default {
       players = _.indexBy(players, '_id');
 
       return state.merge({
+        loaded: true,
         players: getPlayerRecordMap(players, state.get('players'))
       });
     }

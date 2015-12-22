@@ -32,8 +32,10 @@ if (settings.ssr) {
 // the client side to prevent the router from switching the page until its data has been loaded.
 
 // see https://github.com/jlongster/react-redux-universal-hot-example/commit/e13b93518c8c9b5524ad50f1c566ed6c480c1888?diff=split
+//   + https://github.com/jlongster/react-redux-universal-hot-example/pull/6
 
   Meteor.startup(() => {
+
     // Do the rendering.
     ReactRouterSSR.Run(routes, {}, {
       wrapper: Root,

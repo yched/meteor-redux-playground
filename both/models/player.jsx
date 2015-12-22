@@ -13,7 +13,7 @@ Players.views = {
   })
 };
 // Wrapper for Players.find() to build the query for a view name.
-Players.getCursor = function (viewName, params) {
+Players.findByView = function (viewName, params) {
   const view = this.views[viewName](params);
   return this.find(view.find, view.options);
 };

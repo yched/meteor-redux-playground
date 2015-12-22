@@ -4,7 +4,6 @@ import { Provider } from 'react-redux';
 import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
 
 let Root = props => {
-  console.log('Root', props.store.getState());
   return (
     <div>
       <Provider store={props.store}>
