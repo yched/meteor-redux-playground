@@ -11,30 +11,22 @@ import * as settings from 'settings.jsx'
 
 import 'both/models/methods'
 
-import Symbol from 'symbol';
-//global.Symbol = Symbol;
-//console.log(global);
 Meteor.startup(() => {
-
-  // Create the store, with the initial state sent by the server rendering
-  // if enabled (else empty initial state)
-  const store = createStore(window.__INITIAL_STATE__);
-
-  // Create the browser navigation history and bind it to the store.
-  const history = createHistory();
-  syncReduxAndRouter(history, store);
-
-  // Enable Webpack hot module replacement for the store's reducers
-  // @todo Even if SSR ?
-  module.hot && module.hot.accept('client/reducers', () => {
-    store.replaceReducer(reducer)
-  });
 
   // Do the rendering (note : this works even if SSR is not enabled on the server-side)
   ReactRouterSSR.Run(routes, {
-    history,
-    // Wrap in the <Root> component, bound to our store.
-    wrapper: withProps({store, debug: settings.debug}, Root)
+    wrapper: withProps({debug: settings.debug}, Root),
+    history: createHistory(),
+    createReduxStore: (initialState, history) => {
+      const store = createStore(initialState);
+      syncReduxAndRouter(history, store);
+      // Enable Webpack hot module replacement for the store's reducers
+      // @todo Even if SSR ?
+      module.hot && module.hot.accept('client/reducers', () => {
+        store.replaceReducer(reducer)
+      });
+      return store;
+    }
   });
 
 });

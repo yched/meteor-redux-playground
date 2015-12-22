@@ -25,6 +25,25 @@ ReactRouterSSR.Run = function(routes, clientOptions) {
       document.body.appendChild(rootElement);
     }
 
+    let reduxStore;
+    if (typeof clientOptions.createReduxStore !== 'undefined') {
+      let initialData;
+      //InjectData.getData('redux-initial-state', data => {initialData = data});
+      // @temp inline version of https://atmospherejs.com/meteorhacks/inject-data
+      var dom = document.querySelector('script[type="text/inject-data"]');
+      var injectedDataString = dom.textContent.trim();
+      var _decode = function (encodedEjson) {
+        var decodedEjsonString = decodeURIComponent(encodedEjson);
+        if (!decodedEjsonString) return null;
+
+        return JSON.parse(decodedEjsonString);
+      };
+      var _data = _decode(injectedDataString) || {};
+      initialData = _data['redux-initial-state'];
+
+      reduxStore = clientOptions.createReduxStore(initialData, history);
+    }
+
     let app = (
       <Router
         history={history}
@@ -33,7 +52,13 @@ ReactRouterSSR.Run = function(routes, clientOptions) {
     );
 
     if (clientOptions.wrapper) {
-      app = <clientOptions.wrapper>{app}</clientOptions.wrapper>;
+      const wrapperProps = {};
+      // Pass the redux store to the wrapper, which is supposed to be some
+      // flavour or react-redux's <Provider>.
+      if (reduxStore) {
+        wrapperProps.store = reduxStore;
+      }
+      app = <clientOptions.wrapper {...wrapperProps}>{app}</clientOptions.wrapper>;
     }
 
     ReactDOM.render(app, rootElement);

@@ -39,7 +39,7 @@ let ReactRouterSSR = {};
 
 ReactRouterSSR.LoadWebpackStats = function(stats) {
   webpackStats = stats;
-};
+}
 
 ReactRouterSSR.Run = function(routes, clientOptions, serverOptions) {
   if (!clientOptions) {
@@ -94,17 +94,6 @@ ReactRouterSSR.Run = function(routes, clientOptions, serverOptions) {
         }
 
         console.log('route match', renderProps.location.pathname, renderProps.params);
-        if (typeof serverOptions.createReduxStore !== 'undefined') {
-          // Create a history and set the current path, in case the store wants
-          // to bind to it using redux-simple-router's syncReduxAndRouter().
-          const myHistory = history.useQueries(history.createMemoryHistory)();
-          myHistory.replace(req.url);
-          // Create the store.
-          const store = serverOptions.createReduxStore(myHistory);
-
-          serverOptions.reduxStore = store;
-        }
-
         sendSSRHtml(clientOptions, serverOptions, context, req, res, next, renderProps);
       }));
 
@@ -143,13 +132,6 @@ function patchResWrite(clientOptions, serverOptions, originalWrite, css, html, h
 
       if (typeof serverOptions.webpackStats !== 'undefined') {
         data = addAssetsChunks(serverOptions, data);
-      }
-
-      // After rendering was done, pass the resulting store state to the client
-      // so that he can start from there.
-      // @todo use res.pushData in generateSSRData() instead ?
-      if (typeof serverOptions.reduxStore !== 'undefined') {
-        data = data.replace('</body>', `<script>window.__INITIAL_STATE__ = ${JSON.stringify(serverOptions.reduxStore.getState())}</script></body>`);
       }
     }
 
@@ -207,20 +189,41 @@ function generateSSRData(serverOptions, context, req, res, renderProps) {
         ...serverOptions.props
       };
 
-      let app = <RoutingContext {...renderProps} />;
+      // If using redux, create the store.
+      let reduxStore;
+      if (typeof serverOptions.createReduxStore !== 'undefined') {
+        // Create a history and set the current path, in case the callback wants
+        // to bind it to the store using redux-simple-router's syncReduxAndRouter().
+        const reduxHistory = history.useQueries(history.createMemoryHistory)();
+        reduxHistory.replace(req.url);
+        // Create the store.
+        reduxStore = serverOptions.createReduxStore(reduxHistory);
+        // Fetch components data.
+        fetchComponentData(renderProps, reduxStore);
+      }
 
+      // Wrap the <RoutingContext> if needed before rendering it.
+      let app = <RoutingContext {...renderProps} />;
       if (serverOptions.wrapper) {
         const wrapperProps = {};
-        if (typeof serverOptions.reduxStore !== 'undefined') {
-          // Pass the store to the wrapper.
-          wrapperProps.store = serverOptions.reduxStore;
-          // Wait for all components data to be available.
-          fetchComponentData(renderProps, serverOptions.reduxStore).await();
+        // Pass the redux store to the wrapper, which is supposed to be some
+        // flavour or react-redux's <Provider>.
+        if (reduxStore) {
+          wrapperProps.store = reduxStore;
         }
         app = <serverOptions.wrapper {...wrapperProps}>{app}</serverOptions.wrapper>;
       }
 
+      // Do the rendering.
       html = ReactDOMServer.renderToString(app);
+
+      // If using redux, pass the resulting redux state to the client so that it
+      // can hydrate from there.
+      if (reduxStore) {
+        // @todo JSON.parse(JSON.stringify()) is used to reduce possible immutables down to
+        // pure Javascript. There is probably a smarter way.
+        res.pushData('redux-initial-state', JSON.parse(JSON.stringify(reduxStore.getState())));
+      }
 
       head = Helmet.rewind();
 
@@ -229,11 +232,6 @@ function generateSSRData(serverOptions, context, req, res, renderProps) {
       if (serverOptions.postRender) {
         serverOptions.postRender(req, res);
       }
-
-      // Pass the resulting redux state to the client.
-      //if (typeof serverOptions.reduxStore !== 'undefined') {
-      //  res.pushData('redux-initial-state', serverOptions.reduxStore.getState());
-      //}
 
       Meteor.subscribe = originalSubscribe;
 
@@ -252,12 +250,16 @@ function generateSSRData(serverOptions, context, req, res, renderProps) {
 
 function fetchComponentData(renderProps, reduxStore) {
   const promises = renderProps.components
-    .filter((component) => !!component) // Weed out 'undefined' routes
-    .filter((component) => component.needs) // only look at ones with a static needs()
-    .map((component) => component.needs(reduxStore.getState, renderProps))    // pull out needs() methods
-    .map(need => reduxStore.dispatch(need))  // call needs() methods
+    // Weed out 'undefined' routes.
+    .filter(component => !!component)
+    // Only look at components with a static fetchData() method
+    .filter(component => component.fetchData)
+    // Call the fetchData() methods, which lets the component dispatch possibly
+    // asynchronous actions, and collect the promises.
+    .map(component => component.fetchData(reduxStore.getState, reduxStore.dispatch, renderProps));
 
-  return Promise.all(promises);
+  // Wait until all promises have been resolved.
+  Promise.all(promises).await();
 }
 
 function SSRSubscribe(context) {

@@ -31,7 +31,7 @@ class AppContainer extends React.Component {
   // Note :
   // - Meteor.subscribe() in Tracker.autorun() is stop()ed when the computation is stopped
   // - 'loaded' : Meteor.subscribe().ready() is reactive
-  static needs(getState, renderProps) {
+  static fetchData(getState, dispatch, renderProps) {
     const props = mapStateToProps(getState(), renderProps);
     // @todo subscribe+track here and in componentWillMount ?
     // We do need to unsubscribe/stop the tracker when the component is unmounted...
@@ -41,8 +41,9 @@ class AppContainer extends React.Component {
     //    'players': [props.playerView, {listId: props.listId}]
     //  }
     //};
+    console.log('fetchData');
     Meteor.subscribe('players', props.playerView, {listId: props.listId});
-    return actions.trackPlayerCollection(Mongo.Collection.get('players').findByView(props.playerView, {listId: props.listId}));
+    return dispatch(actions.trackPlayerCollection(Mongo.Collection.get('players').findByView(props.playerView, {listId: props.listId})));
   }
 
   // Subscribe to the Players publication, and track reactive changes.
