@@ -17,7 +17,7 @@ Meteor.startup(() => {
   ReactRouterSSR.Run(routes, {
     wrapper: withProps({debug: settings.debug}, Root),
     history: createHistory(),
-    createReduxStore: (initialState, history) => {
+    createReduxStore: (history, initialState) => {
       const store = createStore(initialState);
       syncReduxAndRouter(history, store);
       // Enable Webpack hot module replacement for the store's reducers

@@ -5,7 +5,7 @@
 // meteor algorithm to check if this is a meteor serving http request or not
 function IsAppUrl(req) {
   var url = req.url
-  if (url === '/favicon.ico' || url === '/robots.txt') {
+  if(url === '/favicon.ico' || url === '/robots.txt') {
     return false;
   }
 
@@ -15,12 +15,12 @@ function IsAppUrl(req) {
   // then removing it from poisoning an app permanently. Eventually,
   // once we have server side routing, this won't be needed as
   // unknown URLs with return a 404 automatically.
-  if (url === '/app.manifest') {
+  if(url === '/app.manifest') {
     return false;
   }
 
   // Avoid serving app HTML for declared routes such as /sockjs/.
-  //if (RoutePolicy.classify(url)) {
+  //if(RoutePolicy.classify(url)) {
   //  return false;
   //}
   return true;
@@ -112,7 +112,7 @@ function sendSSRHtml(clientOptions, serverOptions, context, req, res, next, rend
 
 function patchResWrite(clientOptions, serverOptions, originalWrite, css, html, head) {
   return function(data) {
-    if (typeof data === 'string' && data.indexOf('<!DOCTYPE html>') === 0) {
+    if(typeof data === 'string' && data.indexOf('<!DOCTYPE html>') === 0) {
       if (!serverOptions.dontMoveScripts) {
         data = moveScripts(data);
       }

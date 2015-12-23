@@ -46,9 +46,9 @@ if (settings.ssr) {
     // Do the rendering.
     ReactRouterSSR.Run(routes, {}, {
       wrapper: Root,
-      createReduxStore: (history) => {
+      createReduxStore: (history, initialState) => {
         // Initialize the store and bind it to the history.
-        const store = createStore();
+        const store = createStore(initialState);
         syncReduxAndRouter(history, store);
         return store;
       }
