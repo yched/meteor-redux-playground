@@ -87,14 +87,14 @@ ReactRouterSSR.Run = function(routes, clientOptions, serverOptions) {
         } else if (redirectLocation) {
           res.writeHead(302, { Location: redirectLocation.pathname + redirectLocation.search })
           res.end();
-        } else if (!renderProps) {
+        } else if (renderProps) {
+          console.log('route match', renderProps.location.pathname, renderProps.params);
+          sendSSRHtml(clientOptions, serverOptions, context, req, res, next, renderProps);
+        } else {
           res.writeHead(404);
           res.write('Not found');
           res.end();
         }
-
-        console.log('route match', renderProps.location.pathname, renderProps.params);
-        sendSSRHtml(clientOptions, serverOptions, context, req, res, next, renderProps);
       }));
 
       Meteor.userId = originalUserId;
