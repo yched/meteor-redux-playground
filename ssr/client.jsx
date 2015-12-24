@@ -28,8 +28,10 @@ ReactRouterSSR.Run = function(routes, clientOptions) {
     // If using redux, create the store with the initial state sent by the server. 
     let reduxStore;
     if (typeof clientOptions.createReduxStore !== 'undefined') {
-      let initialState;
-      //InjectData.getData('redux-initial-state', data => {initialState = JSON.parse(data)});
+      //InjectData.getData('redux-initial-state', data => {
+      //  const initialState = data ? JSON.parse(data) : undefined;
+      //  reduxStore = clientOptions.createReduxStore(initialState, history);
+      //});
       // @temp inline version of https://atmospherejs.com/meteorhacks/inject-data
       var dom = document.querySelector('script[type="text/inject-data"]');
       var injectedDataString = dom.textContent.trim();
@@ -39,10 +41,10 @@ ReactRouterSSR.Run = function(routes, clientOptions) {
 
         return JSON.parse(decodedEjsonString);
       };
-      var _data = _decode(injectedDataString) || {};
-      initialState = JSON.parse(_data['redux-initial-state']);
+      let _data = _decode(injectedDataString) || {};
+      let initialState = _data['redux-initial-state'] ? JSON.parse(_data['redux-initial-state']) : undefined;
 
-      reduxStore = clientOptions.createReduxStore(history, initialState);
+      reduxStore = clientOptions.createReduxStore(initialState, history);
     }
 
     let app = (
@@ -55,7 +57,7 @@ ReactRouterSSR.Run = function(routes, clientOptions) {
     if (clientOptions.wrapper) {
       const wrapperProps = {};
       // Pass the redux store to the wrapper, which is supposed to be some
-      // flavour or react-redux's <Provider>.
+      // flavour of react-redux's <Provider>.
       if (reduxStore) {
         wrapperProps.store = reduxStore;
       }

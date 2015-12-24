@@ -1,7 +1,7 @@
+import multi from 'redux-multi'
 import thunk from 'redux-thunk'
-import logger from './middlewares/logger'
 import trackMeteorCollection from './middlewares/track_meteor_collection'
-import { devTools, persistState } from 'redux-devtools'
+import { syncReduxAndRouter } from 'redux-simple-router'
 
 import reducer from 'client/reducers'
 import * as settings from 'settings.jsx'
@@ -10,20 +10,43 @@ import * as settings from 'settings.jsx'
 // middlewares and enhancers.
 import createStoreWithEnhancers from '../helpers/redux_helpers';
 
-export default (initialState) => {
+// Export a createStore function : (initialState, history) => store
+export default function (initialState, history) {
   let middleware = [
+    // Allows an action creator to dispatch an array of actions.
+    multi,
+    // Dispatch actions to track some Mongo collections.
     trackMeteorCollection,
     // Use thunk to trigger Meteor callbacks as actions with side effects
-    thunk,
-    logger
+    thunk
   ];
+  // Console action logger.
+  if (process.env.NODE_ENV !== 'production') {
+    const logger = require('./middlewares/logger');
+    middleware.push(logger);
+  }
 
   let enhancers = [];
-  if (Meteor.isClient && settings.debug) {
+  // Redux-devtools
+  if (Meteor.isClient && settings.debug && process.env.NODE_ENV !== 'production') {
+    const { devTools, persistState } = require('redux-devtools');
     enhancers.push(devTools());
     enhancers.push(persistState(window.location.href.match(/[?&]debug_session=([^&]+)\b/)));
   }
 
-  const createStore = createStoreWithEnhancers(middleware, enhancers);
-  return createStore(reducer, initialState);
+  // Create the store.
+  const finalCreateStore = createStoreWithEnhancers(middleware, enhancers);
+  const store = finalCreateStore(reducer, initialState);
+
+  // Bind it to the history object we were passed.
+  syncReduxAndRouter(history, store);
+
+  // Enable Webpack hot module replacement for the store's reducers
+  if (Meteor.isClient && process.env.NODE_ENV !== 'production') {
+    module.hot && module.hot.accept('client/reducers', () => {
+      store.replaceReducer(require('client/reducers'))
+    });
+  }
+
+  return store;
 }

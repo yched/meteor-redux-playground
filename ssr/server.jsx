@@ -196,8 +196,8 @@ function generateSSRData(serverOptions, context, req, res, renderProps) {
         // to bind it to the store using redux-simple-router's syncReduxAndRouter().
         const reduxHistory = history.useQueries(history.createMemoryHistory)();
         reduxHistory.replace(req.url);
-        // Create the store.
-        reduxStore = serverOptions.createReduxStore(reduxHistory);
+        // Create the store, with no initial state.
+        reduxStore = serverOptions.createReduxStore(undefined, reduxHistory);
         // Fetch components data.
         fetchComponentData(renderProps, reduxStore);
       }
@@ -207,7 +207,7 @@ function generateSSRData(serverOptions, context, req, res, renderProps) {
       if (serverOptions.wrapper) {
         const wrapperProps = {};
         // Pass the redux store to the wrapper, which is supposed to be some
-        // flavour or react-redux's <Provider>.
+        // flavour of react-redux's <Provider>.
         if (reduxStore) {
           wrapperProps.store = reduxStore;
         }

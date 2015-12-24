@@ -1,4 +1,3 @@
-console.log(path.resolve(path.dirname(__dirname)));
 module.exports = {
   entry: './main',
   resolve: {

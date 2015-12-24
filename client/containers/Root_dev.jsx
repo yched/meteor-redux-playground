@@ -4,18 +4,21 @@ import { Provider } from 'react-redux';
 import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
 
 let Root = props => {
-  return (
+  const children = props.devTools ?
     <div>
-      <Provider store={props.store}>
-        {props.children}
-      </Provider>
-      { props.debug ?
+      {props.children}
+      {props.devTools ?
         <DebugPanel top right bottom>
-          <DevTools store={props.store} monitor={LogMonitor} />
+          <DevTools store={props.store} monitor={LogMonitor}/>
         </DebugPanel>
         : ''
       }
-    </div>
+    </div> :
+    props.children;
+  return (
+    <Provider store={props.store}>
+      {children}
+    </Provider>
   )
 };
 
@@ -23,7 +26,7 @@ Root = compose(
   pure,
   setPropTypes({
     store: React.PropTypes.object.isRequired,
-    debug: React.PropTypes.bool
+    devTools: React.PropTypes.bool
   })
 )(Root);
 

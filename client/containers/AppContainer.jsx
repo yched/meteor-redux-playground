@@ -41,7 +41,6 @@ class AppContainer extends React.Component {
     //    'players': [props.playerView, {listId: props.listId}]
     //  }
     //};
-    console.log('fetchData');
     Meteor.subscribe('players', props.playerView, {listId: props.listId});
     return dispatch(actions.trackPlayerCollection(Mongo.Collection.get('players').findByView(props.playerView, {listId: props.listId})));
   }

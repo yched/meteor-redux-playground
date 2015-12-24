@@ -11,28 +11,19 @@ import * as settings from 'settings.jsx'
 
 console.log("Starting Leaderboard Server...");
 
-// @todo see https://github.com/thereactivestack/kickstart-hugeapp
-
-// Import what's needed for Server-Side Rendering.
-import ReactRouterSSR from './ssr.jsx'
-import { syncReduxAndRouter } from 'redux-simple-router'
-import routes from 'client/routes'
-import createStore from 'client/store/store'
-import Root from 'client/components/Root'
-
 if (settings.ssr) {
   console.log('SSR !!');
+
+  // Import what's needed for Server-Side Rendering.
+  const ReactRouterSSR = require('../ssr/server');
+  const routes = require('client/routes');
+  const createReduxStore = require('client/store/store');
+  const Root = require('client/containers/Root');
 
   Meteor.startup(() => {
     ReactRouterSSR.Run(routes, {}, {
       wrapper: Root,
-      createReduxStore: (history, initialState) => {
-        // Initialize the store and bind it to the history.
-        const store = createStore(initialState);
-        syncReduxAndRouter(history, store);
-        return store;
-      }
+      createReduxStore
     });
   });
 }
-
