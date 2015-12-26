@@ -28,23 +28,12 @@ ReactRouterSSR.Run = function(routes, clientOptions) {
     // If using redux, create the store with the initial state sent by the server. 
     let reduxStore;
     if (typeof clientOptions.createReduxStore !== 'undefined') {
-      //InjectData.getData('redux-initial-state', data => {
-      //  const initialState = data ? JSON.parse(data) : undefined;
-      //  reduxStore = clientOptions.createReduxStore(initialState, history);
-      //});
-      // @temp inline version of https://atmospherejs.com/meteorhacks/inject-data
-      var dom = document.querySelector('script[type="text/inject-data"]');
-      var injectedDataString = dom.textContent.trim();
-      var _decode = function (encodedEjson) {
-        var decodedEjsonString = decodeURIComponent(encodedEjson);
-        if (!decodedEjsonString) return null;
-
-        return JSON.parse(decodedEjsonString);
-      };
-      let _data = _decode(injectedDataString) || {};
-      let initialState = _data['redux-initial-state'] ? JSON.parse(_data['redux-initial-state']) : undefined;
-
-      reduxStore = clientOptions.createReduxStore(initialState, history);
+      const InjectData = Package['meteorhacks:inject-data'].InjectData;
+      InjectData.getData('redux-initial-state', data => {
+        const initialState = data ? JSON.parse(data) : undefined;
+        console.log(initialState);
+        reduxStore = clientOptions.createReduxStore(initialState, history);
+      });
     }
 
     let app = (
