@@ -31,7 +31,6 @@ ReactRouterSSR.Run = function(routes, clientOptions) {
       const InjectData = Package['meteorhacks:inject-data'].InjectData;
       InjectData.getData('redux-initial-state', data => {
         const initialState = data ? JSON.parse(data) : undefined;
-        console.log(initialState);
         reduxStore = clientOptions.createReduxStore(initialState, history);
       });
     }

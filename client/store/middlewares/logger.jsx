@@ -1,38 +1,39 @@
 import createLogger from 'redux-logger'
 import * as Immutable from 'immutable';
 
-let logger;
 
-// Convert Immutables
-const stateTransformer = (state) => {
-  let newState = {};
-  for (let i of Object.keys(state)) {
-    if (Immutable.Iterable.isIterable(state[i])) {
-      newState['[Immutable]' + i] = state[i].toJS();
-    } else {
-      newState[i] = state[i];
-    }
-  }
-  return newState;
-};
+let options;
 
 if (Meteor.isClient) {
-  logger = createLogger({
-    stateTransformer
-  })
-}
-else {
-  logger = store => next => action => {
-    log('[Dispatching]', action);
-    // essentially call 'dispatch'
-    let result = next(action);
-    log('[Store]', store.getState());
-    return result;
+  // Convert Immutables.
+  const stateTransformer= (state) => {
+    let newState = {};
+    for (let i of Object.keys(state)) {
+      const immutableTypes = ["Map", "OrderedMap", "List", "Seq", "Collection", "Stack", "Set", "OrderedSet", "Record", "Range", "Repeat", "Iterable"];
+      const type = _.find(immutableTypes, type => Immutable[type] == state[i].constructor);
+      if (type) {
+        newState[`[Immutable:${type}]`+ i] = state[i].toJS();
+      } else {
+        newState[i] = state[i];
+      }
+    }
+    return newState;
   };
 
-  function log() {
-    console.log.apply(console, arguments);
-  }
+  options = {
+    duration: true,
+    collapsed: true,
+    logger: console,
+    stateTransformer
+  };
+}
+else {
+  options = {
+    duration: true,
+    collapsed: true,
+    logger: console,
+    colors: false
+  };
 }
 
-export default logger;
+export default createLogger(options);
