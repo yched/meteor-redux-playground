@@ -35,12 +35,12 @@ class AppContainer extends React.Component {
     const props = mapStateToProps(getState(), renderProps);
     // @todo subscribe+track here and in componentWillMount ?
     // We do need to unsubscribe/stop the tracker when the component is unmounted...
-    //a = {
+    // payload = {
     //  subscription: ['players', props.playerView, {listId: props.listId}],
     //  collections: {
     //    'players': [props.playerView, {listId: props.listId}]
     //  }
-    //};
+    // };
     Meteor.subscribe('players', props.playerView, {listId: props.listId});
     return dispatch(actions.trackPlayerCollection(Mongo.Collection.get('players').findByView(props.playerView, {listId: props.listId})));
   }
