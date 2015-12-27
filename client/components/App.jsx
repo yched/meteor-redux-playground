@@ -53,6 +53,13 @@ class App extends React.Component {
         :
           <div>Loading</div>
         }
+
+        <button onClick={props.actions.fetchHttp.bind(null, 'http://drupal.org')}>Get</button>
+        &nbsp;
+        {props.remoteData.get('error') ? props.remoteData.get('error') :
+           (props.remoteData.get('running') ? props.remoteData.get('running') + ' - running' :
+             (props.remoteData.get('data') ? props.remoteData.get('data') :
+               'empty'))}
       </div>
     )
   }

@@ -14,6 +14,8 @@ const mapStateToProps = (state, props) => ({
   playersLoaded: state.playersCollection.get('loaded'),
   // Add the URL param passed by the router
   listId: parseInt(props.params.listId),
+  // Remote data
+  remoteData: state.remoteData,
   // Use reselect selectors for derived data :
   selectedPlayer: selectors.selectedPlayer(state)
 });

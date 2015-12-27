@@ -1,5 +1,6 @@
 import multi from 'redux-multi'
 import thunk from 'redux-thunk'
+import promiseMiddleware from 'redux-promise'
 import trackMeteorCollection from './middlewares/track_meteor_collection'
 import { syncReduxAndRouter } from 'redux-simple-router'
 
@@ -18,7 +19,9 @@ export default function (initialState, history) {
     // Dispatch actions to track some Mongo collections.
     trackMeteorCollection,
     // Use thunk to trigger Meteor callbacks as actions with side effects
-    thunk
+    thunk,
+    // Dispatch Promises for async actions
+    promiseMiddleware
   ];
   // Console action logger.
   if (process.env.NODE_ENV !== 'production') {

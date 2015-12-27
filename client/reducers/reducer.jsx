@@ -51,7 +51,20 @@ export default {
         players: getPlayerRecordMap(players, state.get('players'))
       });
     }
-  }, true, playersCollectionConstructor)
+  }, true, playersCollectionConstructor),
+
+  remoteData: createReducer({data: '', running: false, error: undefined}, {
+    'FETCH_HTTP_STARTED': (state, {payload: url}) => state.merge({
+      data: '',
+      running: url,
+      error: undefined
+    }),
+    'FETCH_HTTP_FINISHED': (state, {payload, error}) => state.merge({
+      data: error ? '' : payload.substring(0, 20),
+      running: false,
+      error: payload.message
+    })
+  })
 }
 
 // Used when receiving the initial state sent by server rendering.
