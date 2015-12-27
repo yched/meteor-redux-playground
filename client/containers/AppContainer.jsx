@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import actions from 'client/store/actions';
+import * as actions from 'client/store/actions';
 import * as selectors from '../selectors/index';
 import App from 'client/components/App';
 import Players from 'both/models/player';
