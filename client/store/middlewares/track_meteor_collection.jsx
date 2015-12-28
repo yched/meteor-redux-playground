@@ -6,26 +6,47 @@ import {createAction} from 'redux-actions';
 // - also pass the collection to the callback, so that we can use a single action for
 //   all tracked collections.
 const trackMeteorCollection = store => next => action => {
-  // If the payload is a Mongo Cursor or Collection
-  // @todo "instanceof Mongo.Cursor" doesn't work on the server ??
-  //if (action.payload && (action.payload instanceof Mongo.Cursor || action.payload instanceof Mongo.Collection)) {
-  if (action.payload && (typeof action.payload.fetch === 'function' || typeof action.payload.find === 'function')) {
-    // If we were passed a collection, track all content.
-    // If we were passed directly a cursor, track that cursor.
-    const cursor = (action.payload instanceof Mongo.Collection) ? action.payload.find() : action.payload;
+  if (action.type && action.type === 'TRACK_METEOR_COLLECTION') {
+    const {subscribe, cursor} = action.payload;
+    let tracker;
 
-    // On the client, track the cursor to dispatch the action on change.
-    // We return the Tracker computation so that the caller can call stop() on it to stop tracking.
-    if (Meteor.isClient) {
-      return Tracker.autorun(function (computation) {
-        // fetch() on the cursor triggers autorun.
-        store.dispatch({...action, payload: {docs: cursor.fetch(), cursor}});
+    // Build a promise that resolves when the subscription is ready.
+    const promise = new Promise((resolve, reject) => {
+
+      // Autorun is not available on the server, we fake one that only does a
+      // single run and returns a fake stop() callback.
+      const autorun = Meteor.isClient ? Tracker.autorun : (func => {func(); return {stop: () => {}}});
+
+      // @todo dispatch an action before subscribing ?
+      tracker = autorun(computation => {
+        // Resolve the promise when the subscription is ready,
+        // Reject it if an error occurs before that.
+        const subscription = Meteor.subscribe(...subscribe, {
+          onReady: resolve,
+          // @todo dispatch an action when stopped ?
+          onStop: (err) => err && reject(err)
+        });
+
+        // Once the subscription is ready, dispatch the 'UPDATE' event on each change.
+        // Note : ready() is reactive.
+        if (subscription.ready()) {
+          // Now evaluate the cursor.
+          const realCursor = cursor();
+          const collectionName = Meteor.isClient ? realCursor.collection.name : realCursor._cursorDescription.collectionName;
+          // Note : fetch() is reactive.
+          const docs = realCursor.fetch();
+          store.dispatch({
+            'type': 'TRACK_METEOR_COLLECTION_UPDATE',
+            payload: {collectionName, docs}
+          });
+        }
       });
+    });
+
+    return {
+      promise: Promise.resolve(), //.then(() => console.log('promise resolved')),
+      tracker
     }
-    // When doing serever-side rendering, we don't want to track anything.
-    // Just dispatch the docs once right away, and return a dummy stop() function.
-    store.dispatch({...action, payload: {docs: cursor.fetch(), cursor}});
-    return () => {};
   }
 
   // Else ignore the action and just pass it through to the next middleware.

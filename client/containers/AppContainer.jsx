@@ -30,21 +30,27 @@ const mapDispatchToProps = (dispatch) => ({
 class AppContainer extends React.Component {
 
   // @todo see the @connectData() decorator in react-redux-universal-hot
-  // Note :
-  // - Meteor.subscribe() in Tracker.autorun() is stop()ed when the computation is stopped
-  // - 'loaded' : Meteor.subscribe().ready() is reactive
   static fetchData(getState, dispatch, renderProps) {
     const props = mapStateToProps(getState(), renderProps);
-    // @todo subscribe+track here and in componentWillMount ?
-    // We do need to unsubscribe/stop the tracker when the component is unmounted...
-    // payload = {
-    //  subscription: ['players', props.playerView, {listId: props.listId}],
-    //  collections: {
-    //    'players': [props.playerView, {listId: props.listId}]
-    //  }
-    // };
-    Meteor.subscribe('players', props.playerView, {listId: props.listId});
-    return dispatch(actions.trackPlayerCollection(Mongo.Collection.get('players').findByView(props.playerView, {listId: props.listId})));
+    const params = {listId: props.listId};
+    const result = dispatch(actions.trackMeteorCollection(
+      ['players', props.playerView, params],
+      //['players', 'findByView', [props.playerView, params]],
+      () => Mongo.Collection.get('players').findByView(props.playerView, params)
+    ));
+    //{
+    //  subscription: 'players',
+    //  subscriptionArgs: [props.playerView, params],
+    //  collections: [
+    //    {
+    //      players: {
+    //        find: 'findByView',
+    //        findArgs: [props.playerView, params]
+    //      }
+    //    }
+    //  ]
+    //}
+    return result.promise;
   }
 
   // Subscribe to the Players publication, and track reactive changes.
@@ -61,19 +67,16 @@ class AppContainer extends React.Component {
   }
 
   _subscribeToPlayers(viewName, params) {
-    // Subscribe to 'players' publication, with the current view.
-    this.sub && this.sub.stop();
-    this.sub = Meteor.subscribe('players', viewName, params);
-    // Track the Minimongo cursor on the request we're interested in.
-    this.track && this.track.stop();
-    this.track = this.props.actions.trackPlayerCollection(Mongo.Collection.get('players').findByView(viewName, params));
+    this.tracker && this.tracker.stop();
+    const result = this.props.actions.trackMeteorCollection(
+      ['players', viewName, params],
+      () => Mongo.Collection.get('players').findByView(viewName, params)
+    );
+    this.tracker = result.tracker;
   }
 
   componentWillUnmount() {
-    // Unsubscribe to 'players' publication.
-    this.sub.stop();
-    // Stop tracking the request.
-    this.track.stop();
+    this.tracker && this.tracker.stop();
   }
 
 

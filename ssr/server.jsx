@@ -79,7 +79,7 @@ ReactRouterSSR.Run = function(routes, clientOptions, serverOptions) {
 
       // On the server, no route should be async (I guess we trust the app)
       match({ routes, location: req.url }, Meteor.bindEnvironment((err, redirectLocation, renderProps) => {
-        console.log('----------------------------------------------------');
+        console.log('————————————————————————————————————————————');
         if (err) {
           res.writeHead(500);
           res.write(err.messages);
