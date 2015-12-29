@@ -44,6 +44,7 @@ const trackMeteorCollection = store => next => action => {
     });
 
     return {
+      // @todo promise is never resolved on the server ??
       promise: Promise.resolve(), //.then(() => console.log('promise resolved')),
       tracker
     }
