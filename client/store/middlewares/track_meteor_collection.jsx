@@ -7,40 +7,48 @@ import {createAction} from 'redux-actions';
 //   all tracked collections.
 const trackMeteorCollection = store => next => action => {
   if (action.type && action.type === 'TRACK_METEOR_COLLECTION') {
-    const {subscribe, cursor} = action.payload;
-    let tracker;
+    const {subscriptions, collections} = action.payload;
 
-    // Build a promise that resolves when the subscription is ready.
-    const promise = new Promise((resolve, reject) => {
+    let promise;
 
-      // Autorun is not available on the server, we fake one that only does a
-      // single run and returns a fake stop() callback.
-      const autorun = Meteor.isClient ? Tracker.autorun : (func => {func(); return {stop: () => {}}});
+    // Autorun is not available on the server, we fake one that only does a
+    // single run and returns a fake stop() callback.
+    const autorun = Meteor.isClient ? Tracker.autorun : (func => {func(); return {stop: () => {}}});
 
-      // @todo dispatch an action before subscribing ?
-      tracker = autorun(computation => {
-        // Resolve the promise when the subscription is ready,
-        // Reject it if an error occurs before that.
-        const subscription = Meteor.subscribe(...subscribe, {
-          onReady: resolve,
-          // @todo dispatch an action when stopped ?
-          onStop: (err) => err && reject(err)
+    // @todo dispatch an action before subscribing ?
+    const tracker = autorun(computation => {
+      // Resolve the promise when the subscription is ready,
+      // Reject it if an error occurs before that.
+      const promises = [];
+      for (let subscriptionName of Object.keys(subscriptions)) {
+        const args = subscriptions[subscriptionName];
+        promises.push(new Promise((resolve, reject) => {
+          Meteor.subscribe(subscriptionName, ...args, {
+            onReady: resolve,
+            // @todo dispatch an action when stopped ?
+            onStop: (err) => err && reject(err)
+          })
+        }));
+      }
+
+      promise = Promise.all(promises)
+        .then(() => console.log('promise resolved'))
+        .then(() => {
+          for (let collectionName of Object.keys(collections)) {
+            const data = collections[collectionName];
+            const findArgs = Array.isArray(data) ? data : data.args;
+            const findMethod = Array.isArray(data) ? 'find' : data.find;
+
+            // Note : fetch() is reactive.
+            const cursor = Meteor.Collection.get(collectionName)[findMethod](...findArgs);
+            const docs = cursor.fetch();
+            store.dispatch({
+              'type': 'TRACK_METEOR_COLLECTION_UPDATE',
+              payload: {collectionName, docs}
+            });
+          }
         });
 
-        // Once the subscription is ready, dispatch the 'UPDATE' event on each change.
-        // Note : ready() is reactive.
-        if (subscription.ready()) {
-          // Now evaluate the cursor.
-          const realCursor = cursor();
-          const collectionName = Meteor.isClient ? realCursor.collection.name : realCursor._cursorDescription.collectionName;
-          // Note : fetch() is reactive.
-          const docs = realCursor.fetch();
-          store.dispatch({
-            'type': 'TRACK_METEOR_COLLECTION_UPDATE',
-            payload: {collectionName, docs}
-          });
-        }
-      });
     });
 
     return {

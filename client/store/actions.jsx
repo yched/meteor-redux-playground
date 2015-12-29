@@ -8,7 +8,7 @@ export const selectPlayer = createAction('SELECT_PLAYER', playerId => playerId);
 export const setPlayerView = createAction('SET_PLAYER_VIEW', viewName => viewName);
 
 // Track updates to a Mongo collection cursor.
-export const trackMeteorCollection = createAction('TRACK_METEOR_COLLECTION', (subscribe, cursor) => ({subscribe, cursor}));
+export const trackMeteorCollection = createAction('TRACK_METEOR_COLLECTION', (subscriptions, collections) => ({subscriptions, collections}));
 
 // Side effects (Meteor method calls) via redux-thunk (the action creator returns a function)
 export const incrementPlayerScore = (playerId, increment, callback) =>

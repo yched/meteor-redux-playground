@@ -34,22 +34,20 @@ class AppContainer extends React.Component {
     const props = mapStateToProps(getState(), renderProps);
     const params = {listId: props.listId};
     const result = dispatch(actions.trackMeteorCollection(
-      ['players', props.playerView, params],
-      //['players', 'findByView', [props.playerView, params]],
-      () => Mongo.Collection.get('players').findByView(props.playerView, params)
+      {players: [props.playerView, params]},
+      {players: {find: 'findByView', args: [props.playerView, params]}}
     ));
-    //{
-    //  subscription: 'players',
-    //  subscriptionArgs: [props.playerView, params],
-    //  collections: [
-    //    {
-    //      players: {
-    //        find: 'findByView',
-    //        findArgs: [props.playerView, params]
-    //      }
-    //    }
-    //  ]
-    //}
+    var a = {
+      subscriptions: {
+        players: [props.playerView, params]
+      },
+      collections: {
+        players: {
+          find: 'findByView',
+          findArgs: [props.playerView, params]
+        }
+      }
+    };
     return result.promise;
   }
 
@@ -67,16 +65,17 @@ class AppContainer extends React.Component {
   }
 
   _subscribeToPlayers(viewName, params) {
-    this.tracker && this.tracker.stop();
+    this.tracker && !this.tracker.stopped && this.tracker.stop();
     const result = this.props.actions.trackMeteorCollection(
-      ['players', viewName, params],
-      () => Mongo.Collection.get('players').findByView(viewName, params)
+      {players: [viewName, params]},
+      {players: {find: 'findByView', args: [viewName, params]}}
     );
     this.tracker = result.tracker;
   }
 
   componentWillUnmount() {
-    this.tracker && this.tracker.stop();
+    this.tracker && !this.tracker.stopped && this.tracker.stop();
+    this.tracker = null;
   }
 
 
