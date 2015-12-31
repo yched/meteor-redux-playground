@@ -1,10 +1,11 @@
 import { createSelector } from 'reselect';
 import * as Immutable from 'immutable';
 
-// From
+// From :
 // - the players
-// - the selected player ID,
-// return the selected player.
+// - the list,
+// - the selected sorting
+// return the ordered list of players to display
 
 export default createSelector(
   (state) => state.collections.players,
