@@ -7,57 +7,41 @@ import {createAction} from 'redux-actions';
 //   all tracked collections.
 const trackMeteorCollection = store => next => action => {
   if (action.type && action.type === 'TRACK_METEOR_COLLECTION') {
-    const {subscriptions, collections} = action.payload;
-
-    let promise;
+    const collections = action.payload;
 
     // Autorun is not available on the server, we fake one that only does a
     // single run and returns a fake stop() callback.
     const autorun = Meteor.isClient ? Tracker.autorun : (func => {func(); return {stop: () => {}}});
 
+    const trackers = [];
     // @todo dispatch an action before subscribing ?
-    const tracker = autorun(computation => {
-      // Resolve the promise when the subscription is ready,
-      // Reject it if an error occurs before that.
-      const promises = [];
-      for (let subscriptionName of Object.keys(subscriptions)) {
-        const args = subscriptions[subscriptionName];
-        promises.push(new Promise((resolve, reject) => {
-          Meteor.subscribe(subscriptionName, ...args, {
-            onReady: resolve,
-            // @todo dispatch an action when stopped ?
-            onStop: (err) => err && reject(err)
-          })
-        }));
-      }
-
-      promise = Promise.all(promises)
-        .then(() => console.log('promise resolved'))
-        .then(() => {
-          for (let collectionName of Object.keys(collections)) {
-            const data = collections[collectionName];
-            const findArgs = Array.isArray(data) ? data : data.args;
-            const findMethod = Array.isArray(data) ? 'find' : data.find;
-// @todo Not good, we should have one autorun by updated collection, or we fire for all...
-// @todo on ne recoit pas les updates suivants...
-            // Note : fetch() is reactive.
-            // @todo On trouve *tous* les players à ce moment...
-            store.dispatch({
-              'type': 'TRACK_METEOR_COLLECTION_UPDATE',
-              payload: {
-                collectionName,
-                docs: Mongo.Collection.get(collectionName)[findMethod](...findArgs).fetch()
-              }
-            });
+    for (let collectionName of Object.keys(collections)) {
+      const tracker = autorun(computation => {
+        const data = collections[collectionName];
+        const findArgs = Array.isArray(data) ? data : data.args;
+        const findMethod = Array.isArray(data) ? 'find' : data.find;
+        const docs = Mongo.Collection.get(collectionName)[findMethod](...findArgs).fetch();
+        console.log('tracker', collectionName, docs);
+        // @todo on ne recoit pas les updates suivants...
+        // Note : fetch() is reactive.
+        // @todo On trouve *tous* les players à ce moment...
+        store.dispatch({
+          'type': 'TRACK_METEOR_COLLECTION_UPDATE',
+          payload: {
+            collectionName,
+            docs
           }
         });
-
-    });
+      });
+      trackers.push(tracker);
+    }
 
     return {
-      // @todo promise is never resolved on the server ??
-      promise: Promise.resolve(), //.then(() => console.log('promise resolved')),
-      tracker
+      stopped: false,
+      stop() {
+        trackers.map(tracker => tracker.stop());
+        this.stopped = true;
+      }
     }
   }
 
