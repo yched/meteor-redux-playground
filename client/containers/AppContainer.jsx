@@ -9,14 +9,15 @@ import Players from 'both/models/player';
 // Connect to the redux store :
 // Pick props that AppContainer receives from the store.
 const mapStateToProps = (state, props) => ({
-  playerView: state.playersCollection.get('viewName'),
-  players: state.playersCollection.get('players'),
-  playersLoaded: state.playersCollection.get('loaded'),
+  playerView: state.userInterface.get('playerView'),
+  //collectionsLoaded: state.collections.get('_loaded'),
   // Add the URL param passed by the router
-  listId: parseInt(props.params.listId),
+  listId: props.params.listId,
   // Remote data
   remoteData: state.remoteData,
+
   // Use reselect selectors for derived data :
+  players: selectors.playersList(state, props.params.listId),
   selectedPlayer: selectors.selectedPlayer(state)
 });
 // Also pass all actions pre-bound to the store's dispatch() in props.actions,
@@ -32,43 +33,37 @@ class AppContainer extends React.Component {
   // @todo see the @connectData() decorator in react-redux-universal-hot
   static fetchData(getState, dispatch, renderProps) {
     const props = mapStateToProps(getState(), renderProps);
-    const params = {listId: props.listId};
     const result = dispatch(actions.trackMeteorCollection(
-      {players: [props.playerView, params]},
-      {players: {find: 'findByView', args: [props.playerView, params]}}
-    ));
-    var a = {
-      subscriptions: {
-        players: [props.playerView, params]
-      },
-      collections: {
-        players: {
-          find: 'findByView',
-          findArgs: [props.playerView, params]
-        }
+      {playersInList: [props.listId]},
+      {
+        lists: [{_id: props.listId}],
+        players: []
       }
-    };
+    ));
     return result.promise;
   }
 
   // Subscribe to the Players publication, and track reactive changes.
   componentWillMount() {
     if (Meteor.isClient)
-      this._subscribeToPlayers(this.props.playerView, {listId: this.props.listId});
+      this._subscribeToPlayers(this.props.listId);
   }
 
-  // Re-subscribe if the view changed.
+  // Re-subscribe if the listId changed.
   componentWillReceiveProps(nextProps) {
-    if (nextProps.playerView !== this.props.playerView || nextProps.listId !== this.props.listId) {
-      this._subscribeToPlayers(nextProps.playerView, {listId: nextProps.listId});
+    if (nextProps.listId !== this.props.listId) {
+      this._subscribeToPlayers(nextProps.listId);
     }
   }
 
-  _subscribeToPlayers(viewName, params) {
+  _subscribeToPlayers(listId) {
     this.tracker && !this.tracker.stopped && this.tracker.stop();
     const result = this.props.actions.trackMeteorCollection(
-      {players: [viewName, params]},
-      {players: {find: 'findByView', args: [viewName, params]}}
+      {playersInList: [listId]},
+      {
+        lists: [{_id: listId}],
+        players: []
+      }
     );
     this.tracker = result.tracker;
   }
@@ -80,6 +75,7 @@ class AppContainer extends React.Component {
 
 
   render() {
+    console.log(this.props.players.toJS());
     return (
       <App {...this.props} />
     );

@@ -1,7 +1,7 @@
 import React from 'react';
 import { pure, setPropTypes } from 'recompose';
 import { mapOf } from 'react-immutable-proptypes';
-import { playerPropType } from 'client/immutable_models/player';
+import ImmutableModels from 'client/immutable_models';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import Helmet from 'react-helmet';
@@ -12,11 +12,11 @@ import Navigation from './Navigation';
 @DragDropContext(HTML5Backend)
 @pure
 @setPropTypes({
-  listId: React.PropTypes.number.isRequired,
+  listId: React.PropTypes.string.isRequired,
   playerView: React.PropTypes.string.isRequired,
-  players: mapOf(playerPropType).isRequired,
-  playersLoaded: React.PropTypes.bool.isRequired,
-  selectedPlayer: playerPropType,
+  players: mapOf(ImmutableModels.players.propType).isRequired,
+  selectedPlayer: ImmutableModels.players.propType,
+  //playersLoaded: React.PropTypes.bool.isRequired,
 
   actions: React.PropTypes.shape({
     setPlayerView: React.PropTypes.func.isRequired,
@@ -57,7 +57,7 @@ class App extends React.Component {
         <button onClick={props.actions.fetchHttp.bind(null, 'http://drupal.org')}>Get</button>
         &nbsp;
         {props.remoteData.get('error') ? props.remoteData.get('error') :
-           (props.remoteData.get('running') ? props.remoteData.get('running') + ' - running' :
+           (props.remoteData.get('fetching') ? 'fetching' + props.remoteData.get('fetching') :
              (props.remoteData.get('data') ? props.remoteData.get('data') :
                'empty'))}
       </div>

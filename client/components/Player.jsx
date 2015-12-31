@@ -1,7 +1,7 @@
 import React from 'react';
 import { visualizeRender } from 'client/helpers/react_helpers';
 import { compose, pure, setPropTypes } from 'recompose';
-import { playerPropType } from 'client/immutable_models/player';
+import ImmutableModels from 'client/immutable_models';
 
 let PlayerItem = ({player, isSelected, selectPlayer}) => (
   <li className={ 'player' + (isSelected ? ' selected' : '') }
@@ -15,7 +15,7 @@ PlayerItem = compose(
   //visualizeRender,
   pure,
   setPropTypes({
-    player: playerPropType.isRequired,
+    player: ImmutableModels.players.propType.isRequired,
     isSelected: React.PropTypes.bool,
     selectPlayer: React.PropTypes.func.isRequired
   })

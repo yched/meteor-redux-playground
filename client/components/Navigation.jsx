@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 
 let Navigation = props => (
   <ul>
-    {[1, 2].map(listId => (
+    {['list1', 'list2'].map(listId => (
       <li key={listId}>
         {props.listId && listId === props.listId ?
           <div>List {listId}</div> :
@@ -18,7 +18,7 @@ let Navigation = props => (
 export default compose(
   pure,
   setPropTypes({
-    listId: React.PropTypes.number
+    listId: React.PropTypes.string
   })
 )(Navigation);
 

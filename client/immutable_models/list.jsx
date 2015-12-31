@@ -6,13 +6,11 @@ export default {
   // Immutable Record class for players
   record: Immutable.Record({
     _id: '',
-    name: '',
-    score: 0
+    players: [],
   }),
   // React proptype for our records
   propType: recordOf({
     _id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    score: PropTypes.number.isRequired
+    players: PropTypes.array.isRequired,
   })
 }

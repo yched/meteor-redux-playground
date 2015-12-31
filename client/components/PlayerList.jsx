@@ -1,14 +1,14 @@
 import React from 'react';
 import { pure, setPropTypes } from 'recompose';
 import { mapOf } from 'react-immutable-proptypes';
-import { playerPropType } from 'client/immutable_models/player';
+import ImmutableModels from 'client/immutable_models';
 import PlayerItem from './Player';
 import DraggablePlayerItem from './DraggablePlayer';
 
 @pure
 @setPropTypes({
-  players: mapOf(playerPropType).isRequired,
-  selectedPlayer: playerPropType,
+  players: mapOf(ImmutableModels.players.propType).isRequired,
+  selectedPlayer: ImmutableModels.players.propType,
   playerView: React.PropTypes.string.isRequired,
   selectPlayer: React.PropTypes.func.isRequired,
   updatePlayerIndexes: React.PropTypes.func.isRequired

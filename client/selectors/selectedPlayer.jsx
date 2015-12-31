@@ -5,7 +5,7 @@ import { createSelector } from 'reselect';
 // - the selected player ID,
 // return the selected player.
 export default createSelector(
-  (state) => state.playersCollection.get('players'),
+  (state) => state.collections.players,
   (state) => state.userInterface.get('selectedId'),
   (players, selectedId) => (selectedId && players.has(selectedId)) ? players.get(selectedId) : null
 );

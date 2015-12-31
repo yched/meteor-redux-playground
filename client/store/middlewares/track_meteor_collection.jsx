@@ -38,7 +38,7 @@ const trackMeteorCollection = store => next => action => {
             const data = collections[collectionName];
             const findArgs = Array.isArray(data) ? data : data.args;
             const findMethod = Array.isArray(data) ? 'find' : data.find;
-
+// @todo Not good, we should have one autorun by updated collection, or we fire for all...
             // Note : fetch() is reactive.
             const cursor = Meteor.Collection.get(collectionName)[findMethod](...findArgs);
             const docs = cursor.fetch();

@@ -1,7 +1,11 @@
 import Players from 'both/models/player';
+import Lists from 'both/models/list';
 
-Meteor.publish('players', function(viewName, params) {
-  //Meteor._sleepForMs(3000);
-  // Wrapper for Players.find() - see both/models/player.jsx
-  return Players.findByView(viewName, params);
-});
+Meteor.publishComposite('playersInList', listId => ({
+  find: () => Lists.find(listId),
+  children: [
+    {
+      find: (list) => Players.find({_id: {$in: list.players}})
+    }
+  ]
+}));

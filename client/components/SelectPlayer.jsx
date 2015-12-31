@@ -1,7 +1,7 @@
 import React from 'react';
 import { compose, pure, setPropTypes, defaultProps } from 'recompose';
 import { visualizeRender } from 'client/helpers/react_helpers';
-import { playerPropType } from 'client/immutable_models/player';
+import ImmutableModels from 'client/immutable_models';
 
 let SelectPlayer = props => {
   if (props.selectedPlayer) {
@@ -25,7 +25,7 @@ SelectPlayer = compose(
   //visualizeRender,
   pure,
   setPropTypes({
-    selectedPlayer: playerPropType,
+    selectedPlayer: ImmutableModels.players.propType,
     incrementPlayerScore: React.PropTypes.func.isRequired,
     incrementLevel: React.PropTypes.number
   }),

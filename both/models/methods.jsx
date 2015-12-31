@@ -1,14 +1,14 @@
 import Players from './player';
+import Lists from './list';
 
 Meteor.methods({
   incrementPlayerScore(playerId, increment) {
     //if (Meteor.isServer) Meteor._sleepForMs(3000);
     Players.update(playerId, {$inc: {score: increment}});
   },
-  updatePlayerIndexes(indexesById) {
+  movePlayer(listId, playerId, newPosition) {
     //if (Meteor.isServer) Meteor._sleepForMs(3000);
-    indexesById.forEach( ({_id, index}) => {
-      Players.update(_id, {$set: {index}});
-    });
+    Lists.update(listId, {$pull: {players: playerId}});
+    Lists.update(listId, {$push: {players: {$each: [playerId], $position: newPosition}}});
   }
 });

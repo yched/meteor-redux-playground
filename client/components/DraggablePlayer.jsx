@@ -1,7 +1,7 @@
 import React from 'react';
 import { findDOMNode } from 'react-dom';
 import { compose, pure, setPropTypes } from 'recompose';
-import { playerPropType } from 'client/immutable_models/player';
+import ImmutableModels from 'client/immutable_models';
 import { DragSource, DropTarget } from 'react-dnd';
 import PlayerItem from './Player';
 
@@ -19,7 +19,7 @@ let DraggablePlayerItem = (props) => {
 DraggablePlayerItem = compose(
   pure,
   setPropTypes({
-    player: playerPropType.isRequired,
+    player: ImmutableModels.players.propType.isRequired,
     index: React.PropTypes.number.isRequired,
     isSelected: React.PropTypes.bool,
     selectPlayer: React.PropTypes.func.isRequired,
