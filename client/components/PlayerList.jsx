@@ -1,17 +1,18 @@
 import React from 'react';
 import { pure, setPropTypes } from 'recompose';
-import { mapOf } from 'react-immutable-proptypes';
+import { listOf } from 'react-immutable-proptypes';
 import ImmutableModels from 'client/immutable_models';
 import PlayerItem from './Player';
 import DraggablePlayerItem from './DraggablePlayer';
 
 @pure
 @setPropTypes({
-  players: mapOf(ImmutableModels.players.propType).isRequired,
+  listId: React.PropTypes.string.isRequired,
+  players: listOf(ImmutableModels.players.propType).isRequired,
   selectedPlayer: ImmutableModels.players.propType,
   playerView: React.PropTypes.string.isRequired,
   selectPlayer: React.PropTypes.func.isRequired,
-  updatePlayerIndexes: React.PropTypes.func.isRequired
+  movePlayer: React.PropTypes.func.isRequired
 })
 class PlayerList extends React.Component {
   constructor(props) {
@@ -28,9 +29,9 @@ class PlayerList extends React.Component {
   };
 
   dropCallback = () => {
-    // Dispatch the updatePlayerIndexes action. The endDragCallback is passed as a callback for the
+    // Dispatch the movePlayer action. The endDragCallback is passed as a callback for the
     // Meteor method call, to avoid UI flickering.
-    this.props.updatePlayerIndexes(this.getReorderedPlayers(), this.endDragCallback);
+    this.props.movePlayer(this.props.listId, this.state.dragState.playerId, this.state.dragState.newIndex, this.endDragCallback);
   };
 
   endDragCallback = () => {
@@ -38,8 +39,7 @@ class PlayerList extends React.Component {
   };
 
   getReorderedPlayers = () => {
-    // Convert the map to a list.
-    let players = this.props.players.toList();
+    let players = this.props.players;
     // If dragging, reorder the list according to the current drag state.
     if (this.state.dragState) {
       const [prevIndex, player] = players.findEntry(player => player._id === this.state.dragState.playerId);

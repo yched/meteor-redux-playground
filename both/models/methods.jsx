@@ -8,7 +8,12 @@ Meteor.methods({
   },
   movePlayer(listId, playerId, newPosition) {
     //if (Meteor.isServer) Meteor._sleepForMs(3000);
-    Lists.update(listId, {$pull: {players: playerId}});
-    Lists.update(listId, {$push: {players: {$each: [playerId], $position: newPosition}}});
+    const list = Lists.findOne(listId);
+    // @todo Si quelqu'un d'autre fait une action de add / remove / move à ce
+    // moment, elle sera perdue.
+    if (list) {
+      list.players.splice(newPosition, 0, playerId);
+      Lists.update(listId, {players: list.players});
+    }
   }
 });

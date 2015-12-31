@@ -39,12 +39,15 @@ const trackMeteorCollection = store => next => action => {
             const findArgs = Array.isArray(data) ? data : data.args;
             const findMethod = Array.isArray(data) ? 'find' : data.find;
 // @todo Not good, we should have one autorun by updated collection, or we fire for all...
+// @todo on ne recoit pas les updates suivants...
             // Note : fetch() is reactive.
-            const cursor = Meteor.Collection.get(collectionName)[findMethod](...findArgs);
-            const docs = cursor.fetch();
+            // @todo On trouve *tous* les players à ce moment...
             store.dispatch({
               'type': 'TRACK_METEOR_COLLECTION_UPDATE',
-              payload: {collectionName, docs}
+              payload: {
+                collectionName,
+                docs: Mongo.Collection.get(collectionName)[findMethod](...findArgs).fetch()
+              }
             });
           }
         });

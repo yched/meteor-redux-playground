@@ -17,7 +17,7 @@ const mapStateToProps = (state, props) => ({
   remoteData: state.remoteData,
 
   // Use reselect selectors for derived data :
-  players: selectors.playersList(state, props.params.listId),
+  playersList: selectors.playersList(state, props.params.listId),
   selectedPlayer: selectors.selectedPlayer(state)
 });
 // Also pass all actions pre-bound to the store's dispatch() in props.actions,
@@ -75,7 +75,6 @@ class AppContainer extends React.Component {
 
 
   render() {
-    console.log(this.props.players.toJS());
     return (
       <App {...this.props} />
     );

@@ -10,18 +10,13 @@ export const setPlayerView = createAction('SET_PLAYER_VIEW', viewName => viewNam
 // Track updates to a Mongo collection cursor.
 export const trackMeteorCollection = createAction('TRACK_METEOR_COLLECTION', (subscriptions, collections) => ({subscriptions, collections}));
 
+
 // Side effects (Meteor method calls) via redux-thunk (the action creator returns a function)
 export const incrementPlayerScore = (playerId, increment, callback) =>
   () => Meteor.call('incrementPlayerScore', playerId, increment, callback);
-export const updatePlayerIndexes = (players, callback) =>
-  () => {
-    // Build the array of {_id, index} pairs.
-    let indexesById = [];
-    players.forEach((player, index) => {
-      indexesById.push({_id: player._id, index});
-    });
-    return Meteor.call('updatePlayerIndexes', indexesById, callback)
-  };
+
+export const movePlayer = (listId, playerId, newPosition, callback) =>
+  () => Meteor.call('movePlayer', listId, playerId, newPosition, callback);
 
 // Async action
 const fetchHttpStarted = createAction('FETCH_HTTP_STARTED', url => url);

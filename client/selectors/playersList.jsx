@@ -12,20 +12,20 @@ export default createSelector(
   (state) => state.userInterface.get('playerView'),
   (players, list, playerView) => {
     if (!list) {
-      return Immutable.Map();
+      return Immutable.List();
     }
-    let map = players.filter(player => list.get('players').indexOf(player.get('_id') !== -1));
+    console.log('selector - list :', list.players);
+    console.log('selector - players :', players.map(player => player.name).toJS());
+    let playersList = players.filter(player => list.players.indexOf(player._id) !== -1).toList();
     switch (playerView) {
       case 'by_index':
-        return map.sortBy(player => list.get('players').indexOf(player.get('_id')));
-        //list.get('players').forEach(playerId => {
-        //  if (players.has(playerId)) {
-        //    map = map.set(playerId, players.get(playerId))
-        //  }
-        //});
-        //return map;
+        playersList = playersList.sortBy(player => list.players.indexOf(player._id));
+        break;
       case 'by_score':
-        return map.sortBy(player => player.score)
+        playersList = playersList.sortBy(player => player.score)
+        break;
     }
+    console.log('selector - playersList :', playersList.map(player => player.name).toJS());
+    return playersList;
   }
 );
