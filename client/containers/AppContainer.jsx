@@ -27,71 +27,62 @@ const mapDispatchToProps = (dispatch) => ({
   dispatch
 });
 
+const subscribe = (listId, dispatch) => {
+  return new Promise((resolve, reject) => {
+    Meteor.subscribe('playersInList', listId, {
+      onReady: function () {resolve(this)},
+      onStop: (err) => err && reject(err)
+    })
+  }).then(subscription => {
+    const collectionsTracker = dispatch(actions.trackMeteorCollection({
+      lists: [{_id: listId}],
+      players: []
+    }));
+    return function stop() {
+      collectionsTracker.stop();
+      subscription.stop();
+    }
+  });
+};
+
 @connect(mapStateToProps, mapDispatchToProps)
 class AppContainer extends React.Component {
 
   // @todo see the @connectData() decorator in react-redux-universal-hot
+  // also, react-fetcher
   static fetchData(getState, dispatch, renderProps) {
     const props = mapStateToProps(getState(), renderProps);
-    const promise = new Promise((resolve, reject) => {
-      Meteor.subscribe('playersInList', props.listId, {
-        onReady: resolve,
-        onStop: (err) => err && reject(err)
-      })
-    });
-    promise.then(() => {
-      dispatch(actions.trackMeteorCollection({
-          lists: [{_id: props.listId}],
-          players: []
-        }));
-    });
-
-    return promise;
+    return subscribe(props.listId, dispatch);
   }
 
-  // Subscribe to the Players publication, and track reactive changes.
+  // Subscribe to the publications, and track reactive changes.
   componentWillMount() {
     if (Meteor.isClient)
-      this._subscribeToPlayers(this.props.listId);
+      this._subscribeToCollections(this.props.listId);
   }
 
   // Re-subscribe if the listId changed.
   componentWillReceiveProps(nextProps) {
     if (nextProps.listId !== this.props.listId) {
-      this._subscribeToPlayers(nextProps.listId);
+      this._subscribeToCollections(nextProps.listId);
     }
   }
 
-  _subscribeToPlayers(listId) {
+  _subscribeToCollections(listId) {
     this.tracker && !this.tracker.stopped && this.tracker.stop();
-    let subscription;
-    const promise = new Promise((resolve, reject) => {
-      subscription = Meteor.subscribe('playersInList', listId, {
-        onReady: resolve,
-        onStop: (err) => err && reject(err)
-      })
-    });
-    promise.then(() => {
-      const collectionsTracker = this.props.actions.trackMeteorCollection({
-        lists: [{_id: listId}],
-        players: []
-      });
-      this.tracker = {
-        stopped: false,
-        stop() {
-          this.stopped = true;
-          collectionsTracker.stop();
-          subscription.stop();
+    subscribe(listId, this.props.dispatch)
+      .then(stopTracking => {
+        this.tracker = {
+          stopped: false,
+          stop: () => {this.stopped = true; stopTracking();}
         }
-      }
-    });
+      });
   }
 
   componentWillUnmount() {
     this.tracker && !this.tracker.stopped && this.tracker.stop();
     this.tracker = null;
   }
-
 
   render() {
     return (
