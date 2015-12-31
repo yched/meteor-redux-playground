@@ -5,10 +5,7 @@ Meteor.publishComposite('playersInList', listId => ({
   find: () => Lists.find(listId),
   children: [
     {
-      find: (list) => {
-        console.log(Players.find({_id: {$in: list.players}}).fetch().map(player => player.name));
-        return Players.find({_id: {$in: list.players}})
-      }
+      find: (list) => Players.find({_id: {$in: list.players}})
     }
   ]
 }));

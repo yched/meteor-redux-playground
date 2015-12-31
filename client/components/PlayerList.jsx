@@ -1,10 +1,12 @@
 import React from 'react';
 import { pure, setPropTypes } from 'recompose';
 import { listOf } from 'react-immutable-proptypes';
+import { visualizeRender } from 'client/helpers/react_helpers';
 import ImmutableModels from 'client/immutable_models';
 import PlayerItem from './Player';
 import DraggablePlayerItem from './DraggablePlayer';
 
+@visualizeRender
 @pure
 @setPropTypes({
   listId: React.PropTypes.string.isRequired,
