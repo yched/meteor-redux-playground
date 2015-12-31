@@ -64,19 +64,27 @@ class AppContainer extends React.Component {
 
   _subscribeToPlayers(listId) {
     this.tracker && !this.tracker.stopped && this.tracker.stop();
-    const subscription = Meteor.subscribe('playersInList', listId);
-    const collectionsTracker = this.props.actions.trackMeteorCollection({
-      lists: [{_id: listId}],
-      players: []
+    let subscription;
+    const promise = new Promise((resolve, reject) => {
+      subscription = Meteor.subscribe('playersInList', listId, {
+        onReady: resolve,
+        onStop: (err) => err && reject(err)
+      })
     });
-    this.tracker = {
-      stopped: false,
-      stop() {
-        this.stopped = true;
-        collectionsTracker.stop();
-        subscription.stop();
+    promise.then(() => {
+      const collectionsTracker = this.props.actions.trackMeteorCollection({
+        lists: [{_id: listId}],
+        players: []
+      });
+      this.tracker = {
+        stopped: false,
+        stop() {
+          this.stopped = true;
+          collectionsTracker.stop();
+          subscription.stop();
+        }
       }
-    }
+    });
   }
 
   componentWillUnmount() {

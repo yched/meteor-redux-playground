@@ -14,18 +14,17 @@ export default createSelector(
     if (!list) {
       return Immutable.List();
     }
-    console.log('selector - list :', list.players);
-    console.log('selector - players :', players.map(player => player.name).toJS());
+    //console.log('selector - list :', list.players);
     let playersList = players.filter(player => list.players.indexOf(player._id) !== -1).toList();
     switch (playerView) {
       case 'by_index':
         playersList = playersList.sortBy(player => list.players.indexOf(player._id));
         break;
       case 'by_score':
-        playersList = playersList.sortBy(player => player.score)
+        playersList = playersList.sortBy(player => - player.score);
         break;
     }
-    console.log('selector - playersList :', playersList.map(player => player.name).toJS());
+    //console.log('selector - playersList :', playersList.map(player => player.name).toJS());
     return playersList;
   }
 );

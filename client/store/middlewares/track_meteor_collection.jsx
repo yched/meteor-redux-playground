@@ -2,7 +2,6 @@ import {createAction} from 'redux-actions';
 
 // Adapted from skinnygeek1010:flux-helpers Meteor package :
 // - defined as a middleware,
-// - allows tracking a specific request (Mongo Cursor)
 // - also pass the collection to the callback, so that we can use a single action for
 //   all tracked collections.
 const trackMeteorCollection = store => next => action => {
@@ -14,17 +13,12 @@ const trackMeteorCollection = store => next => action => {
     const autorun = Meteor.isClient ? Tracker.autorun : (func => {func(); return {stop: () => {}}});
 
     const trackers = [];
-    // @todo dispatch an action before subscribing ?
-    for (let collectionName of Object.keys(collections)) {
+    Object.keys(collections).map(collectionName => {
       const tracker = autorun(computation => {
-        const data = collections[collectionName];
-        const findArgs = Array.isArray(data) ? data : data.args;
-        const findMethod = Array.isArray(data) ? 'find' : data.find;
-        const docs = Mongo.Collection.get(collectionName)[findMethod](...findArgs).fetch();
-        console.log('tracker', collectionName, docs);
-        // @todo on ne recoit pas les updates suivants...
+        const args = collections[collectionName];
         // Note : fetch() is reactive.
-        // @todo On trouve *tous* les players à ce moment...
+        const docs = Mongo.Collection.get(collectionName).find(...args).fetch();
+        //console.log('tracker', collectionName, docs);
         store.dispatch({
           'type': 'TRACK_METEOR_COLLECTION_UPDATE',
           payload: {
@@ -34,13 +28,13 @@ const trackMeteorCollection = store => next => action => {
         });
       });
       trackers.push(tracker);
-    }
+    });
 
     return {
       stopped: false,
       stop() {
-        trackers.map(tracker => tracker.stop());
         this.stopped = true;
+        trackers.map(tracker => tracker.stop());
       }
     }
   }

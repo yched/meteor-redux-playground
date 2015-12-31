@@ -27,7 +27,6 @@ import Navigation from './Navigation';
 })
 class App extends React.Component {
   render() {
-    console.log('App');
     const props = this.props;
     return (
       <div>
