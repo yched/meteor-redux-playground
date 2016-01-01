@@ -37,12 +37,12 @@ export default {
   remoteData: createReducer({data: '', running: false, error: undefined}, {
     'FETCH_HTTP_STARTED': (state, {payload: url}) => state.merge({
       data: '',
-      running: url,
+      fetching: true,
       error: undefined
     }),
     'FETCH_HTTP_FINISHED': (state, {payload, error}) => state.merge({
-      data: error ? '' : payload.substring(0, 20),
-      running: false,
+      data: error ? '' : payload.substring(0, 50) + '...',
+      fetching: false,
       error: payload.message
     }),
 

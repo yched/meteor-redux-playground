@@ -28,6 +28,7 @@ import Navigation from './Navigation';
 class App extends React.Component {
   render() {
     const props = this.props;
+    const url = 'http://drupal.org';
     return (
       <div>
         <Helmet title={`Meteor Leaderboard - List ${props.listId}`} />
@@ -51,12 +52,14 @@ class App extends React.Component {
                         incrementPlayerScore={props.actions.incrementPlayerScore} />
         </div>
 
-        <button onClick={props.actions.fetchHttp.bind(null, 'http://drupal.org')}>Get</button>
-        &nbsp;
+        <form onSubmit={e => {e.preventDefault(); props.actions.fetchHttp(this.refs.urlInput.value)}}>
+          <input ref="urlInput" defaultValue="http://drupal.org"/>&nbsp;
+          <button>HTTP request</button>
+        </form>
+        <br/>
         {props.remoteData.get('error') ? props.remoteData.get('error') :
-           (props.remoteData.get('fetching') ? 'fetching' + props.remoteData.get('fetching') :
-             (props.remoteData.get('data') ? props.remoteData.get('data') :
-               'empty'))}
+           (props.remoteData.get('fetching') ? 'fetching: ' + this.refs.urlInput.value :
+             (props.remoteData.get('data') ? props.remoteData.get('data') : ''))}
       </div>
     )
   }
