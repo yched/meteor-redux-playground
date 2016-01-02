@@ -14,8 +14,8 @@ import Navigation from './Navigation';
 @setPropTypes({
   listId: React.PropTypes.string.isRequired,
   playerView: React.PropTypes.string.isRequired,
-  playersList: listOf(ImmutableModels.players.propType).isRequired,
-  selectedPlayer: ImmutableModels.players.propType,
+  playersList: listOf(ImmutableModels.player.propType).isRequired,
+  selectedPlayer: ImmutableModels.player.propType,
   //playersLoaded: React.PropTypes.bool.isRequired,
 
   actions: React.PropTypes.shape({

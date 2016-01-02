@@ -15,7 +15,7 @@ PlayerItem = compose(
   visualizeRender,
   pure,
   setPropTypes({
-    player: ImmutableModels.players.propType.isRequired,
+    player: ImmutableModels.player.propType.isRequired,
     isSelected: React.PropTypes.bool,
     selectPlayer: React.PropTypes.func.isRequired
   })

@@ -19,7 +19,7 @@ let DraggablePlayerItem = (props) => {
 DraggablePlayerItem = compose(
   pure,
   setPropTypes({
-    player: ImmutableModels.players.propType.isRequired,
+    player: ImmutableModels.player.propType.isRequired,
     index: React.PropTypes.number.isRequired,
     isSelected: React.PropTypes.bool,
     selectPlayer: React.PropTypes.func.isRequired,

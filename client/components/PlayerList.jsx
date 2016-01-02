@@ -10,8 +10,8 @@ import DraggablePlayerItem from './DraggablePlayer';
 @pure
 @setPropTypes({
   listId: React.PropTypes.string.isRequired,
-  players: listOf(ImmutableModels.players.propType).isRequired,
-  selectedPlayer: ImmutableModels.players.propType,
+  players: listOf(ImmutableModels.player.propType).isRequired,
+  selectedPlayer: ImmutableModels.player.propType,
   playerView: React.PropTypes.string.isRequired,
   selectPlayer: React.PropTypes.func.isRequired,
   movePlayer: React.PropTypes.func.isRequired

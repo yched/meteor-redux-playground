@@ -11,6 +11,6 @@ export default {
   // React proptype for our records
   propType: recordOf({
     _id: PropTypes.string.isRequired,
-    players: PropTypes.array.isRequired,
+    players: PropTypes.array.isRequired
   })
 }

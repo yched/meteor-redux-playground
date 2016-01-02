@@ -1,7 +1,7 @@
-import lists from './list'
-import players from './player'
+import list from './list'
+import player from './player'
 
 export default {
-  lists,
-  players
+  list,
+  player
 }

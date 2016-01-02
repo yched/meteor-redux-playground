@@ -1,10 +1,14 @@
-import { combineReducers } from 'redux';
+import { combineReducers } from 'redux'
 import { routeReducer } from 'redux-simple-router'
 import reducer from './reducer'
-import createCollectionReducers from './collections'
+import collectionReducer from './collections'
+import ImmutableModels from 'client/immutable_models';
 
 export default combineReducers({
   ...reducer,
-  collections: createCollectionReducers('lists', 'players'),
+  collections: combineReducers({
+    lists: collectionReducer('lists', ImmutableModels.list.record),
+    players: collectionReducer('players', ImmutableModels.player.record)
+  }),
   routing: routeReducer
 })

@@ -1,18 +1,8 @@
-import { createReducer } from 'redux-immutablejs';
-import { combineReducers } from 'redux';
-import * as Immutable from 'immutable';
-import ImmutableModels from 'client/immutable_models';
+import { createReducer } from 'redux-immutablejs'
+import * as Immutable from 'immutable'
 
-export default (...collectionNames) => {
-  const reducers = {};
-  collectionNames.map(collectionName => {
-    reducers[collectionName] = collectionReducer(collectionName)
-  });
-  return combineReducers(reducers);
-}
-
-function collectionReducer(collection) {
-  const constructor = immutableCollectionConstructor.bind(null, ImmutableModels[collection].record);
+export default (collection, recordClass) => {
+  const constructor = immutableCollectionConstructor.bind(null, recordClass);
   return createReducer([], {
     'TRACK_METEOR_COLLECTION_UPDATE': (state, {payload: {collectionName, docs}}) => {
       return collectionName === collection ?

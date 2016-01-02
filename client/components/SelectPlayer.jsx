@@ -25,7 +25,7 @@ SelectPlayer = compose(
   //visualizeRender,
   pure,
   setPropTypes({
-    selectedPlayer: ImmutableModels.players.propType,
+    selectedPlayer: ImmutableModels.player.propType,
     incrementPlayerScore: React.PropTypes.func.isRequired,
     incrementLevel: React.PropTypes.number
   }),
