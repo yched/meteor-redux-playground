@@ -4,8 +4,7 @@ module.exports = {
     root: path.resolve(path.dirname(__dirname)),
     alias: {
       'both' : 'both',
-      'client' : 'client',
-      'node_modules' : 'node_modules'
+      'client' : 'client'
     },
     extensions: ['', '.js', '.jsx', '.json']
   },

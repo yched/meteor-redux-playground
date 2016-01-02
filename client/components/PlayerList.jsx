@@ -5,6 +5,7 @@ import { visualizeRender } from 'client/helpers/react_helpers';
 import ImmutableModels from 'client/immutable_models';
 import PlayerItem from './Player';
 import DraggablePlayerItem from './DraggablePlayer';
+import SelectPlayer from './SelectPlayer';
 
 @visualizeRender
 @pure
@@ -53,30 +54,41 @@ class PlayerList extends React.Component {
 
   render() {
     return (
-      <ul className="leaderboard">
-        {
-          this.getReorderedPlayers().map((player, index) => (
-            this.props.playerView === 'by_index' ?
-              <DraggablePlayerItem
-                key={ player._id }
-                player={ player }
-                isSelected={ this.props.selectedPlayer ? this.props.selectedPlayer._id === player._id : false}
-                selectPlayer={ this.props.selectPlayer }
-                index={index}
-                dragCallback={ this.dragCallback }
-                dropCallback={ this.dropCallback }
-                endDragCallback={ this.endDragCallback }
-              />
-            :
-              <PlayerItem
-                key={ player._id }
-                player={ player }
-                isSelected={ this.props.selectedPlayer ? this.props.selectedPlayer._id === player._id : false }
-                selectPlayer={ this.props.selectPlayer }
-              />
-          ))
-        }
-      </ul>
+      <div>
+
+        <input type="radio" name="sorting" defaultChecked={this.props.playerView === 'by_index'} onClick={() => this.props.setPlayerView('by_index')} />
+        Manual sort
+        <input type="radio" name="sorting" defaultChecked={this.props.playerView === 'by_score'} onClick={() => this.props.setPlayerView('by_score')} />
+        Sort by scores
+
+        <ul className="leaderboard">
+          {
+            this.getReorderedPlayers().map((player, index) => (
+              this.props.playerView === 'by_index' ?
+                <DraggablePlayerItem
+                  key={ player._id }
+                  player={ player }
+                  isSelected={ this.props.selectedPlayer ? this.props.selectedPlayer._id === player._id : false}
+                  selectPlayer={ this.props.selectPlayer }
+                  index={index}
+                  dragCallback={ this.dragCallback }
+                  dropCallback={ this.dropCallback }
+                  endDragCallback={ this.endDragCallback }
+                />
+              :
+                <PlayerItem
+                  key={ player._id }
+                  player={ player }
+                  isSelected={ this.props.selectedPlayer ? this.props.selectedPlayer._id === player._id : false }
+                  selectPlayer={ this.props.selectPlayer }
+                />
+            ))
+          }
+        </ul>
+
+        <SelectPlayer selectedPlayer={this.props.selectedPlayer}
+                      incrementPlayerScore={this.props.incrementPlayerScore} />
+      </div>
     );
   };
 }

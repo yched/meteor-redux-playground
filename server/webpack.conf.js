@@ -6,8 +6,7 @@ module.exports = {
       'both' : 'both',
       'server' : 'server',
       // We'll include client files as well, for SSR.
-      'client' : 'client',
-      'node_modules' : 'node_modules'
+      'client' : 'client'
     },
     extensions: ['', '.js', '.jsx', '.json']
   },

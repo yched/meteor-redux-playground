@@ -6,7 +6,6 @@ import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import Helmet from 'react-helmet';
 import PlayerList from './PlayerList';
-import SelectPlayer from './SelectPlayer';
 import Navigation from './Navigation';
 
 @DragDropContext(HTML5Backend)
@@ -35,23 +34,16 @@ class App extends React.Component {
 
         <Navigation listId={props.listId} />
 
-        <input type="radio" name="sorting" defaultChecked={props.playerView === 'by_index'} onClick={() => props.actions.setPlayerView('by_index')} />
-        Manual sort
-        <input type="radio" name="sorting" defaultChecked={props.playerView === 'by_score'} onClick={() => props.actions.setPlayerView('by_score')} />
-        Sort by scores
+        <PlayerList listId={props.listId}
+                    players={props.playersList}
+                    selectedPlayer={props.selectedPlayer}
+                    playerView={props.playerView}
+                    selectPlayer={props.actions.selectPlayer}
+                    movePlayer={props.actions.movePlayer}
+                    setPlayerView={props.actions.setPlayerView}
+                    incrementPlayerScore={props.actions.incrementPlayerScore} />
 
-        <div>
-          <PlayerList listId={props.listId}
-                      players={props.playersList}
-                      selectedPlayer={props.selectedPlayer}
-                      playerView={props.playerView}
-                      selectPlayer={props.actions.selectPlayer}
-                      movePlayer={props.actions.movePlayer}/>
-
-          <SelectPlayer selectedPlayer = {props.selectedPlayer}
-                        incrementPlayerScore={props.actions.incrementPlayerScore} />
-        </div>
-
+        <hr/>
         <form onSubmit={e => {e.preventDefault(); props.actions.fetchHttp(this.refs.urlInput.value)}}>
           <input ref="urlInput" defaultValue="http://drupal.org"/>&nbsp;
           <button>HTTP request</button>
