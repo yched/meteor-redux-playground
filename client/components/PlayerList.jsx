@@ -7,7 +7,7 @@ import PlayerItem from './Player';
 import DraggablePlayerItem from './DraggablePlayer';
 import SelectPlayer from './SelectPlayer';
 
-@visualizeRender
+//@visualizeRender
 @pure
 @setPropTypes({
   listId: React.PropTypes.string.isRequired,

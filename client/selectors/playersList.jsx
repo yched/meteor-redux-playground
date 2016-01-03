@@ -16,7 +16,10 @@ export default createSelector(
       return Immutable.List();
     }
     //console.log('selector - list :', list.players);
-    let playersList = players.filter(player => list.players.indexOf(player._id) !== -1).toList();
+
+    // Only keep players that are on the list.
+    let playersList = players.filter((player, playerId) => list.players.includes(playerId)).toList();
+    // Sort them by the intended order.
     switch (playerView) {
       case 'by_index':
         playersList = playersList.sortBy(player => list.players.indexOf(player._id));
