@@ -1,7 +1,6 @@
 import multi from 'redux-multi'
 import thunk from 'redux-thunk'
 import promiseMiddleware from 'redux-promise'
-import { meteorCollectionMiddleware } from 'client/helpers/redux_meteor'
 import { syncReduxAndRouter } from 'redux-simple-router'
 
 import reducer from 'client/reducers'
@@ -16,8 +15,6 @@ export default function (initialState, history) {
   let middleware = [
     // Allows an action creator to dispatch an array of actions.
     multi,
-    // Dispatch actions to track some Mongo collections.
-    meteorCollectionMiddleware,
     // Use thunk to trigger Meteor callbacks as actions with side effects
     thunk,
     // Dispatch Promises for async actions

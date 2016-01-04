@@ -15,6 +15,8 @@ mobile-experience
 
 webpack:webpack
 
+react-meteor-data
+
 meteorhacks:fast-render
 promise
 #routepolicy

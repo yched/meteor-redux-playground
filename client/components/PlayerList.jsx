@@ -45,9 +45,13 @@ class PlayerList extends React.Component {
     let players = this.props.players;
     // If dragging, reorder the list according to the current drag state.
     if (this.state.dragState) {
-      const [prevIndex, player] = players.findEntry(player => player._id === this.state.dragState.playerId);
+      const ids = _.pluck(players, '_id');
+      const prevIndex = _.indexOf(ids, this.state.dragState.playerId);
+      const player = players[prevIndex];
       // Remove the player from its previous position, and insert it at the new index.
-      players = players.delete(prevIndex).splice(this.state.dragState.newIndex, 0, player);
+      // @todo not fully working...
+      players.splice(prevIndex, 1);
+      players.splice(this.state.dragState.newIndex, 0, player);
     }
     return players;
   };

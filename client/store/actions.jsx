@@ -1,5 +1,4 @@
 import { createAction } from 'redux-actions'
-import { trackMeteorCollectionAction } from 'client/helpers/redux_meteor'
 
 // Change the router path.
 export const pushPath = require('redux-simple-router').pushPath;
@@ -7,9 +6,6 @@ export const pushPath = require('redux-simple-router').pushPath;
 // Basic UI actions.
 export const selectPlayer = createAction('SELECT_PLAYER', playerId => playerId);
 export const setPlayerView = createAction('SET_PLAYER_VIEW', viewName => viewName);
-
-// Track updates to a Mongo collection cursor.
-export const trackMeteorCollection = trackMeteorCollectionAction;
 
 // Side effects (Meteor method calls) via redux-thunk (the action creator returns a function)
 export const incrementPlayerScore = (playerId, increment, callback) =>

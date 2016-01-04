@@ -1,24 +1,22 @@
 import React from 'react';
+import { decorate as reactMixin} from 'react-mixin';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from 'client/store/actions';
-import * as selectors from '../selectors/index';
+import Immutable from 'immutable';
 import App from 'client/components/App';
 import Players from 'both/models/player';
+import Lists from 'both/models/list';
 
 // Connect to the redux store :
 // Pick props that AppContainer receives from the store.
 const mapStateToProps = (state, props) => ({
   playerView: state.userInterface.get('playerView'),
-  //collectionsLoaded: state.collections.get('_loaded'),
+  selectedId: state.userInterface.get('selectedId'),
   // Add the URL param passed by the router
   listId: props.params.listId,
   // Remote data
   remoteData: state.remoteData,
-
-  // Use reselect selectors for derived data :
-  playersList: selectors.playersList(state, props.params.listId),
-  selectedPlayer: selectors.selectedPlayer(state)
 });
 // Also pass all actions pre-bound to the store's dispatch() in props.actions,
 // and the naked dispatch() itself for conveniency.
@@ -27,67 +25,51 @@ const mapDispatchToProps = (dispatch) => ({
   dispatch
 });
 
-const subscribe = (listId, dispatch) => {
-  return new Promise((resolve, reject) => {
-    Meteor.subscribe('playersInList', listId, {
-      onReady: function () {resolve(this)},
-      onStop: (err) => err && reject(err)
-    })
-  }).then(subscription => {
-    const collectionsTracker = dispatch(actions.trackMeteorCollection({
-      lists: [{_id: listId}],
-      players: []
-    }));
-    return function stop() {
-      collectionsTracker.stop();
-      subscription.stop();
-    }
-  });
-};
-
 @connect(mapStateToProps, mapDispatchToProps)
+@reactMixin(ReactMeteorData)
 class AppContainer extends React.Component {
 
-  // @todo see the @connectData() decorator in react-redux-universal-hot
-  // also, react-fetcher
-  static fetchData(getState, dispatch, renderProps) {
-    return subscribe(renderProps.params.listId, dispatch);
-  }
+  // NOTE: Tourne à chaque changement des props...
+  getMeteorData() {
+    Meteor.subscribe('playersInList', this.props.listId);
 
-  // Subscribe to the publications, and track reactive changes.
-  componentWillMount() {
-    if (Meteor.isClient)
-      this._subscribeToCollections(this.props.listId);
-  }
+    // Fetch the collections data.
+    let players, selectedPlayer;
+    const list = Lists.findOne(this.props.listId);
+    if (list) {
+      players = Players.find({_id: {$in: list.players}}).fetch();
 
-  // Re-subscribe if the listId changed.
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.listId !== this.props.listId) {
-      this._subscribeToCollections(nextProps.listId);
+      // Key players by id for easier tracking.
+      const playersById = _.indexBy(players, '_id');
+      selectedPlayer = playersById[this.props.selectedId] ? playersById[this.props.selectedId] : null
+
+      switch (this.props.playerView) {
+        case 'by_index':
+          players = _.sortBy(players, player => _.indexOf(list.players, player._id));
+          break;
+        case 'by_score':
+          players = _.sortBy(players, player => -player.score);
+          break;
+      }
     }
-  }
-
-  _subscribeToCollections(listId) {
-    this.tracker && !this.tracker.stopped && this.tracker.stop();
-    subscribe(listId, this.props.dispatch)
-      .then(stopTracking => {
-        this.tracker = {
-          stopped: false,
-          stop: () => {this.stopped = true; stopTracking();}
-        }
-      });
-  }
-
-  componentWillUnmount() {
-    this.tracker && !this.tracker.stopped && this.tracker.stop();
-    this.tracker = null;
+    else {
+      players = [];
+      selectedPlayer = null;
+    }
+    return {
+      players,
+      selectedPlayer,
+    };
   }
 
   render() {
     return (
-      <App {...this.props} />
+      <App {...this.props}
+        playersList={this.data.players}
+        selectedPlayer={this.data.selectedPlayer} />
     );
   }
+
 }
 
 export default AppContainer;

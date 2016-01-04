@@ -1,8 +1,5 @@
 import { createReducer } from 'redux-immutablejs';
-import { combineReducers } from 'redux';
 import { routeReducer } from 'redux-simple-router'
-import { collectionReducer} from 'client/helpers/redux_meteor'
-import ImmutableModels from 'client/immutable_models'
 
 // Structure of the store :
 // (NOTE : createReducer() from redux-immutablejs means we use ImmutableJS structures)
@@ -12,21 +9,6 @@ import ImmutableModels from 'client/immutable_models'
 //     selectedId: the _id of the currently selected player
 //     playerView: the name of the current 'view' on the Players collection (see Players.views)
 //   },
-//
-//   collections: {
-//     players: {
-//       [_id]: PlayerRecord({
-//         _id,
-//         name,
-//         score
-//       }),
-//       [_id]: ...,
-//       ...
-//     },
-//     lists: {
-//       ...
-//     }
-//   }
 //
 // }
 //
@@ -38,11 +20,6 @@ export default {
   userInterface: createReducer({selectedId: '', playerView: 'by_index'}, {
     'SELECT_PLAYER': (state, {payload: playerId}) => state.merge({selectedId: playerId}),
     'SET_PLAYER_VIEW': (state, {payload: viewName}) => state.merge({playerView: viewName})
-  }),
-
-  collections: combineReducers({
-    lists: collectionReducer('lists', ImmutableModels.list.record),
-    players: collectionReducer('players', ImmutableModels.player.record)
   }),
 
   // Some reomte data fetched by direct HTTP calls.
