@@ -12,7 +12,7 @@ let PlayerItem = ({player, isSelected, selectPlayer}) => (
 );
 
 PlayerItem = compose(
-  visualizeRender,
+  //visualizeRender,
   pure,
   setPropTypes({
     player: ImmutableModels.player.propType.isRequired,

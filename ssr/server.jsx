@@ -1,6 +1,4 @@
 // Stolen from reactrouter:react-router-ssr
-// With an additional serverOptions.appendCallback option to add
-// window.__INITIAL_STATE__ to the returned HTML.
 
 // meteor algorithm to check if this is a meteor serving http request or not
 function IsAppUrl(req) {
@@ -32,6 +30,8 @@ import { RoutingContext, match } from 'react-router'
 import * as history from 'history'
 import cookieParser from 'cookie-parser'
 import Helmet from 'react-helmet'
+
+const LocalCollection = Package['minimongo'].LocalCollection;
 
 let webpackStats;
 
@@ -128,7 +128,23 @@ function patchResWrite(clientOptions, serverOptions, originalWrite, css, html, h
         );
       }
 
-      data = data.replace('<body>', '<body><div id="' + (clientOptions.rootElement || 'react-app') + '">' + html + '</div>');
+      /*
+       To set multiple root element attributes such as class and style tags, simply pass it a 2-dimensional array
+       of attribute value pairs. I.e. [["class", "sidebar main"], ["style", "background-color: white"]]
+       */
+      let rootElementAttributes = '';
+      const attributes = clientOptions.rootElementAttributes instanceof Array ? clientOptions.rootElementAttributes : [];
+      // check if a 2-dimensional array was passed... if not, be nice and handle it anyway
+      if(attributes[0] instanceof Array) {
+        // set as concatenated string attributes
+        for(var i = 0; i < attributes.length; i++) {
+          rootElementAttributes = rootElementAttributes + ' ' + attributes[i][0] + '="' + attributes[i][1] + '"';
+        }
+      } else if (attributes.length > 0){
+        rootElementAttributes = attributes[0] + '="' + attributes[1] + '"';
+      }
+
+      data = data.replace('<body>', '<body><' + (clientOptions.rootElementType || 'div') + ' id="' + (clientOptions.rootElement || 'react-app') + '" ' + rootElementAttributes + ' >' + html + '</' + (clientOptions.rootElementType || 'div') + '>');
 
       if (typeof serverOptions.webpackStats !== 'undefined') {
         data = addAssetsChunks(serverOptions, data);
@@ -174,7 +190,7 @@ function generateSSRData(serverOptions, context, req, res, renderProps) {
 
       if (Package.mongo && !Package.autopublish) {
         Mongo.Collection._isSSR = true;
-        Mongo.Collection._publishSelectorsSSR = {};
+        Mongo.Collection._ssrData = {};
       }
 
       if (serverOptions.preRender) {
@@ -234,11 +250,11 @@ function generateSSRData(serverOptions, context, req, res, renderProps) {
         serverOptions.postRender(req, res);
       }
 
-      Meteor.subscribe = originalSubscribe;
-
       if (Package.mongo && !Package.autopublish) {
         Mongo.Collection._isSSR = false;
       }
+
+      Meteor.subscribe = originalSubscribe;
     });
 
     res.pushData('fast-render-data', context.getData());
@@ -275,16 +291,34 @@ function fetchComponentData(renderProps, reduxStore) {
 }
 
 function SSRSubscribe(context) {
-  return function(name, ...args) {
+  return function(name, ...params) {
     if (Package.mongo && !Package.autopublish) {
       Mongo.Collection._isSSR = false;
-      const publishResult = Meteor.server.publish_handlers[name].apply(context, args);
-      Mongo.Collection._isSSR = true;
-
-      Mongo.Collection._fakePublish(publishResult);
     }
 
-    context.subscribe.apply(context, arguments);
+    // Even with autopublish, this is needed to load data in fast-render
+    const data = context.subscribe(name, ...params);
+
+    if (Package.mongo && !Package.autopublish) {
+      Mongo.Collection._fakePublish(data);
+      Mongo.Collection._isSSR = true;
+    }
+
+    // Fire the onReady callback immediately.
+    if (params.length) {
+      var callbacks = {};
+      var lastParam = params[params.length - 1];
+      if (_.isFunction(lastParam)) {
+        callbacks.onReady = params.pop();
+      } else if (lastParam &&
+          // XXX COMPAT WITH 1.0.3.1 onError used to exist, but now we use
+          // onStop with an error callback instead.
+        _.any([lastParam.onReady, lastParam.onError, lastParam.onStop],
+          _.isFunction)) {
+        callbacks = params.pop();
+      }
+      callbacks.onReady && callbacks.onReady();
+    }
 
     return {
       stop() {}, // Nothing to stop on server-rendering
@@ -315,67 +349,58 @@ if (Package.mongo && !Package.autopublish) {
   const originalFind = Mongo.Collection.prototype.find;
   const originalFindOne = Mongo.Collection.prototype.findOne;
 
-  Mongo.Collection.prototype.findOne = function() {
-    let args = Array.prototype.slice.call(arguments);
+  Mongo.Collection.prototype._getSSRCollection = function() {
+    return Mongo.Collection._ssrData[this._name] || new LocalCollection(this._name);
+  };
 
+  Mongo.Collection.prototype.findOne = function(...args) {
     if (!Mongo.Collection._isSSR) {
       return originalFindOne.apply(this, args);
     }
 
-    // Make sure to return nothing if no publish has been called
-    if (!Mongo.Collection._publishSelectorsSSR[this._name] || !Mongo.Collection._publishSelectorsSSR[this._name].length) {
-      return originalFindOne.apply(this, [undefined]);
-    }
-
-    if (args.length) {
-      if (typeof args[0] === 'string') {
-        args[0] = { _id: args[0] };
-      }
-
-      args[0] = { $and: [args[0], { $or: Mongo.Collection._publishSelectorsSSR[this._name] }] };
-    } else {
-      args.push({ $or: Mongo.Collection._publishSelectorsSSR[this._name] });
-    }
-
-    return originalFindOne.apply(this, args);
+    return this._getSSRCollection().findOne(...args);
   };
 
-  Mongo.Collection.prototype.find = function() {
-    let args = Array.prototype.slice.call(arguments);
-
+  Mongo.Collection.prototype.find = function(...args) {
     if (!Mongo.Collection._isSSR) {
       return originalFind.apply(this, args);
     }
 
-    // Make sure to return nothing if no publish has been called
-    if (!Mongo.Collection._publishSelectorsSSR[this._name] || !Mongo.Collection._publishSelectorsSSR[this._name].length) {
-      return originalFind.apply(this, [undefined]);
-    }
-
-    if (args.length) {
-      args[0] = { $and: [args[0], { $or: Mongo.Collection._publishSelectorsSSR[this._name] }] };
-    } else {
-      args.push({ $or: Mongo.Collection._publishSelectorsSSR[this._name] });
-    }
-
-    return originalFind.apply(this, args);
+    return this._getSSRCollection().find(...args);
   };
 
-  Mongo.Collection._fakePublish = function(result) {
-    if (Array.isArray(result)) {
-      result.forEach(subResult => Mongo.Collection._fakePublish(subResult));
-      return;
+  Mongo.Collection._fakePublish = function(data) {
+    // Create a local collection and only add the published data
+    for (let name in data) {
+      if (!Mongo.Collection._ssrData[name]) {
+        Mongo.Collection._ssrData[name] = new LocalCollection(name);
+      }
+
+      for (let i = 0; i < data[name].length; ++i) {
+        data[name][i].forEach(doc => {
+          Mongo.Collection._ssrData[name].update({ _id: doc._id }, doc, { upsert: true });
+        });
+      }
     }
-
-    const name = result._cursorDescription.collectionName;
-    const selector = result._cursorDescription.selector;
-
-    if (!Mongo.Collection._publishSelectorsSSR[name]) {
-      Mongo.Collection._publishSelectorsSSR[name] = [];
-    }
-
-    Mongo.Collection._publishSelectorsSSR[name].push(selector);
   };
+
+  // Support SSR for publish-counts
+  if (Package['tmeasday:publish-counts']) {
+    // Counts doesn't exist if we don't wait for startup (weird)
+    Meteor.startup(function() {
+      Counts.get = function(name) {
+        const collection = Mongo.Collection._ssrData.counts || new LocalCollection('counts');
+        const count = collection.findOne(name);
+
+        return count && count.count || 0;
+      };
+
+      Counts.has = function(name) {
+        const collection = Mongo.Collection._ssrData.counts || new LocalCollection('counts');
+        return !!collection.findOne(name);
+      }
+    });
+  }
 }
 
 export default ReactRouterSSR;
