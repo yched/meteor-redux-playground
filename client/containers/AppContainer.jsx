@@ -51,8 +51,7 @@ class AppContainer extends React.Component {
   // @todo see the @connectData() decorator in react-redux-universal-hot
   // also, react-fetcher
   static fetchData(getState, dispatch, renderProps) {
-    const props = mapStateToProps(getState(), renderProps);
-    return subscribe(props.listId, dispatch);
+    return subscribe(renderProps.params.listId, dispatch);
   }
 
   // Subscribe to the publications, and track reactive changes.
