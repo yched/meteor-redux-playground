@@ -11,6 +11,16 @@ import 'both/models/methods'
 
 Meteor.startup(() => {
 
+  // Enable immutable-devtools formatters for Chrome console.
+  // "Enable custom formatters" must be checked in chrome console settings.
+  if (process.env.NODE_ENV !== 'production') {
+    require.ensure(['immutable-devtools'], () => {
+      const installImmutableDevTools = require('immutable-devtools').default;
+      const Immutable = require("immutable");
+      installImmutableDevTools(Immutable);
+    })
+  }
+
   // Enable devTools if applicable.
   const devTools = settings.debug && process.env.NODE_ENV !== 'production';
 
