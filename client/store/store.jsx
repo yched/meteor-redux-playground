@@ -2,7 +2,7 @@ import multi from 'redux-multi'
 import thunk from 'redux-thunk'
 import promiseMiddleware from 'redux-promise'
 import { meteorCollectionMiddleware } from 'client/helpers/redux_meteor'
-import { syncReduxAndRouter } from 'redux-simple-router'
+import { syncHistory } from 'react-router-redux'
 
 import reducer from 'client/reducers'
 import * as settings from 'settings.jsx'
@@ -21,7 +21,9 @@ export default function (initialState, history) {
     // Use thunk to trigger Meteor callbacks as actions with side effects
     thunk,
     // Dispatch Promises for async actions
-    promiseMiddleware
+    promiseMiddleware,
+    // react-router-redux
+    syncHistory(history)
   ];
   // Console action logger.
   if (process.env.NODE_ENV !== 'production') {
@@ -40,9 +42,6 @@ export default function (initialState, history) {
   // Create the store.
   const finalCreateStore = createStoreWithEnhancers(middleware, enhancers);
   const store = finalCreateStore(reducer, initialState);
-
-  // Bind it to the history object we were passed.
-  syncReduxAndRouter(history, store);
 
   // Enable Webpack hot module replacement for the store's reducers
   if (Meteor.isClient && process.env.NODE_ENV !== 'production') {

@@ -1,7 +1,7 @@
 import { createReducer } from 'redux-immutablejs';
 import { combineReducers } from 'redux';
-import { routeReducer } from 'redux-simple-router'
-import { collectionReducer} from 'client/helpers/redux_meteor'
+import { routeReducer } from 'react-router-redux'
+import { collectionReducer } from 'client/helpers/redux_meteor'
 import ImmutableModels from 'client/immutable_models'
 
 // Structure of the store :
