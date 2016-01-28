@@ -1,7 +1,7 @@
 import { createAction } from 'redux-actions'
 
 // Change the router path.
-export const pushPath = require('redux-simple-router').pushPath;
+export const pushPath = require('react-router-redux').routeActions.push;
 
 // Basic UI actions.
 export const selectPlayer = createAction('SELECT_PLAYER', playerId => playerId);

@@ -1,5 +1,5 @@
 import { createReducer } from 'redux-immutablejs';
-import { routeReducer } from 'redux-simple-router'
+import { routeReducer } from 'react-router-redux'
 
 // Structure of the store :
 // (NOTE : createReducer() from redux-immutablejs means we use ImmutableJS structures)
