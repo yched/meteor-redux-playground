@@ -13,6 +13,7 @@ import createStoreWithEnhancers from '../helpers/redux_helpers';
 
 // Export a createStore function : (initialState, history) => store
 export default function (initialState, history) {
+  let routerMiddleware = syncHistory(history);
   let middleware = [
     // Allows an action creator to dispatch an array of actions.
     multi,
@@ -23,7 +24,7 @@ export default function (initialState, history) {
     // Dispatch Promises for async actions
     promiseMiddleware,
     // react-router-redux
-    syncHistory(history)
+    routerMiddleware
   ];
   // Console action logger.
   if (process.env.NODE_ENV !== 'production') {
@@ -43,8 +44,11 @@ export default function (initialState, history) {
   const finalCreateStore = createStoreWithEnhancers(middleware, enhancers);
   const store = finalCreateStore(reducer, initialState);
 
-  // Enable Webpack hot module replacement for the store's reducers
   if (Meteor.isClient && process.env.NODE_ENV !== 'production') {
+    // Enable replay of router actions
+    routerMiddleware.listenForReplays(store);
+
+    // Enable Webpack hot module replacement for the store's reducers
     module.hot && module.hot.accept('client/reducers', () => {
       store.replaceReducer(require('client/reducers'))
     });
